@@ -1,0 +1,2 @@
+*.fasta filter=lfs diff=lfs merge=lfs -text
+backend/models/hybrid_crop_model.pkl filter=lfs diff=lfs merge=lfs -text
