@@ -1,0 +1,20 @@
+[Unit]
+Description=CrossWise Flask ML Backend
+After=network.target
+
+[Service]
+Type=simple
+# User running the service (e.g., ubuntu or opc depending on OS)
+User=ubuntu
+WorkingDirectory=/var/www/crosswise/backend
+Environment="PATH=/var/www/crosswise/backend/venv/bin"
+EnvironmentFile=/var/www/crosswise/backend/.env
+
+# Gunicorn runs Flask on local port 5000 with 2 workers and 180s timeout (for model inference / SHAP)
+ExecStart=/var/www/crosswise/backend/venv/bin/gunicorn --workers 2 --bind 127.0.0.1:5000 --timeout 180 app:app
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

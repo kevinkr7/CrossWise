@@ -25,3 +25,4 @@ pymongo
 dnspython
 Flask-JWT-Extended
 python-dotenv
+gunicorn>=22.0.0

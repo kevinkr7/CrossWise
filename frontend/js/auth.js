@@ -5,9 +5,12 @@
 
 const SESSION_KEY = 'hcp_session';
 const TOKEN_KEY = 'hcp_token';
-const API_BASE_AUTH = `${window.location.protocol}//${window.location.hostname || '127.0.0.1'}:5000`; // Match with api.js
+const API_BASE_AUTH = window.API_BASE || window.CROSSWISE_API_URL || localStorage.getItem('crosswise_api_url') || (
+  ['localhost', '127.0.0.1', '0.0.0.0', ''].includes(window.location.hostname)
+    ? `${window.location.protocol}//${window.location.hostname || '127.0.0.1'}:5000`
+    : 'https://api.yourdomain.com'
+);
 
-/** Returns the current logged-in user object, or null. */
 function getCurrentUser() {
   const session = sessionStorage.getItem(SESSION_KEY);
   if (!session) return null;
