@@ -21,7 +21,7 @@
       <a href="{{ url_for('views.about') }}" class="nav__link {% if active_page == 'about' %}nav__link--active{% endif %}" role="menuitem">About</a>
       <a href="{{ url_for('views.upload') }}" class="nav__link {% if active_page == 'upload' %}nav__link--active{% endif %}" role="menuitem">Virtual Breeding</a>
       <a href="{{ url_for('views.dashboard') }}" class="nav__link {% if active_page == 'dashboard' %}nav__link--active{% endif %}" role="menuitem">Dashboard</a>
-      <a href="{{ url_for('views.analytics') }}" class="nav__link {% if active_page == 'analytics' %}nav__link--active{% endif %}" role="menuitem">Analytics</a>
+      <a href="{{ url_for('views.admin') }}" class="nav__link nav__link--admin {% if active_page == 'admin' %}nav__link--active{% endif %}" role="menuitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Admin</a>
     </div>
 
     <div class="nav__auth">

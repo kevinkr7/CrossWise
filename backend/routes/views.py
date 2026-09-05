@@ -29,7 +29,7 @@ def explainability():
 
 @views_bp.route('/analytics')
 def analytics():
-    return render_template('analytics.html', active_page='analytics')
+    return redirect('/admin')
 
 @views_bp.route('/history')
 def history():

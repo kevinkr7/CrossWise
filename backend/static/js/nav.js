@@ -28,7 +28,7 @@ function initNav() {
           ${user
             ? `<a href="upload.html" class="nav__link${isActive('upload.html')}" role="menuitem">Virtual Breeding</a>
                <a href="dashboard.html" class="nav__link${isActive('dashboard.html')}" role="menuitem">Dashboard</a>
-               ${user.is_admin ? `<a href="analytics.html" class="nav__link${isActive('analytics.html')}" role="menuitem">Analytics</a>` : ''}`
+               ${user.is_admin ? `<a href="admin.html" class="nav__link nav__link--admin${isActive('admin.html')}" role="menuitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Admin</a>` : ''}`
             : ''
           }
         </div>
