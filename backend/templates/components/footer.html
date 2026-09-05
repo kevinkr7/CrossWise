@@ -1,0 +1,50 @@
+<!-- ═══════ SERVER-DRIVEN FOOTER COMPONENT ═══════════════════════════════════ -->
+<footer class="footer">
+  <div class="container footer__grid">
+    <div class="footer__brand-col">
+      <a href="{{ url_for('views.home') }}" class="footer__brand">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:28px;height:28px">
+          <path d="M16 28 C10 22 4 18 4 11 C4 7 8 4 12 5 C14 5.5 15.5 6.5 16 8 C16.5 6.5 18 5.5 20 5 C24 4 28 7 28 11 C28 18 22 22 16 28Z" fill="currentColor" opacity="0.85"/>
+        </svg>
+        <span>CrossWise</span>
+      </a>
+      <p class="footer__desc">
+        Next-generation SNP genomic machine learning framework for hybrid maize breeding, parent cross combination, and yield prediction.
+      </p>
+    </div>
+
+    <div>
+      <div class="footer__heading">Platform</div>
+      <ul class="footer__links">
+        <li><a href="{{ url_for('views.home') }}">Home</a></li>
+        <li><a href="{{ url_for('views.upload') }}">Virtual Breeding</a></li>
+        <li><a href="{{ url_for('views.dashboard') }}">Research Dashboard</a></li>
+        <li><a href="{{ url_for('views.recommend') }}">Recommendation Results</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="footer__heading">Explainability & Analytics</div>
+      <ul class="footer__links">
+        <li><a href="{{ url_for('views.explainability') }}">SHAP Explanations</a></li>
+        <li><a href="{{ url_for('views.analytics') }}">Model Analytics</a></li>
+        <li><a href="{{ url_for('views.upload') }}">Dataset Upload</a></li>
+        <li><a href="{{ url_for('views.dashboard') }}">Breeding History</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="footer__heading">Framework</div>
+      <ul class="footer__links">
+        <li><a href="{{ url_for('views.about') }}">Methodology</a></li>
+        <li><a href="https://github.com" target="_blank" rel="noopener">IEEE Architecture</a></li>
+        <li><a href="{{ url_for('views.about') }}">Developer Team</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container footer__bottom">
+    <div>© 2026 CrossWise — Virtual Breeding Platform. All rights reserved.</div>
+    <div style="color:var(--muted)">Engineered by Kevin &amp; Mahasmriti</div>
+  </div>
+</footer>

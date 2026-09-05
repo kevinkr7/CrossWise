@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual Breeding — CrossWise</title>
+  <meta name="description" content="Upload your SNP genotype CSV, environmental data, and optional phenotypic records to train the AI parent selection model.">
+  <link rel="icon" type="image/png" href="assets/icons/leaf.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Processing Mask -->
+    <div id="processing-mask" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.9);z-index:9999;flex-direction:column;align-items:center;justify-content:center;">
+      <div class="spinner" style="width:48px;height:48px;border-width:4px;border-color:var(--sage-200);border-top-color:var(--sage-600);margin-bottom:var(--s4)"></div>
+      <h2 style="font-family:var(--ff-display);color:var(--sage-800);margin-bottom:var(--s2)">Virtual Breeding in Progress</h2>
+      <div id="processing-status" style="color:var(--text-muted);font-size:var(--t-lg)">Uploading SNP Data...</div>
+      
+      <div style="width:300px;background:var(--surface-sunken);height:6px;border-radius:3px;margin-top:var(--s4);overflow:hidden">
+        <div id="processing-bar" style="height:100%;width:10%;background:var(--sage-500);transition:width 0.5s ease"></div>
+      </div>
+    </div>
+
+  <div class="nav-spacer"></div>
+
+  <main class="main-content" style="max-width:1060px;margin:0 auto">
+
+    <!-- Page Header -->
+    <div class="page-header" data-reveal>
+      <div class="page-header__eyebrow"><span class="tag">Step 1 of 3</span></div>
+      <h1 class="page-header__title">Virtual Breeding</h1>
+      <p class="page-header__sub">Upload candidate maize parent data, select an evaluation environment, and generate AI-powered virtual breeding recommendations.</p>
+    </div>
+
+    
+
+    
+
+
+    <!-- ── Existing dataset status ──────────────────────────────────────── -->
+    <div id="existing-dataset-info" data-reveal></div>
+
+    <!-- ── Two-zone upload grid ───────────────────────────────────────── -->
+    <div class="upload-grid-2 mt-4" data-reveal data-reveal-delay="1" style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s4)">
+
+      <!-- Zone 1: Candidate Parent SNP Data (Required) -->
+      <div class="upload-card upload-card--required" id="zone-snp-card">
+        <div class="upload-card__badge badge--required">Required</div>
+        <div class="upload-card__title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M21 3H3v18h18V3z"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+          Candidate Parent SNP Data
+        </div>
+        <div class="upload-card__desc">One row per maize inbred line. Columns: <code>Line</code> + <code>SNP_001…SNP_300</code></div>
+
+        <div class="upload-zone upload-zone--compact" id="zone-snp" role="button" tabindex="0" aria-label="Upload Candidate Parent SNP Data">
+          <svg class="upload-zone__icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div class="upload-zone__title">Drop SNP CSV or <span class="upload-zone__link">browse</span></div>
+          <div class="upload-zone__hint">.csv — up to 100 MB</div>
+          <input type="file" id="snp-file-input" accept=".csv" aria-label="Candidate Parent SNP Data">
+        </div>
+        <div id="snp-file-status" class="upload-file-status hidden"></div>
+
+        <div class="schema-hint mt-3">
+          <div class="schema-hint__title">Expected columns</div>
+          <div class="schema-hint__row"><code>Line</code> <span>Unique inbred line ID</span></div>
+          <div class="schema-hint__row"><code>SNP_001 … SNP_300</code> <span>Allele pairs (AA / AG / GG / NN)</span></div>
+        </div>
+      </div>
+
+      <!-- Zone 2: Target Environment (Required) -->
+      <div class="upload-card upload-card--required" id="zone-env-card">
+        <div class="upload-card__badge badge--required">Required</div>
+        <div class="upload-card__title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M12 2a10 10 0 0 1 10 10c0 4.42-3.07 8.13-7.22 9.64A10.03 10.03 0 0 1 2 12 10 10 0 0 1 12 2z"/><path d="M12 6v6l4 2"/></svg>
+          Target Environment
+        </div>
+        <div class="upload-card__desc">Select the target location. The model will automatically apply historical environmental data for this region.</div>
+
+        <div style="margin-top:var(--s4)">
+          <select id="location-select" class="input-field" style="width:100%;padding:var(--s2);border:1px solid var(--border);border-radius:6px;background:var(--surface);">
+            <option value="Coimbatore">Coimbatore</option>
+            <option value="Mandya">Mandya</option>
+            <option value="Davangere">Davangere</option>
+            <option value="Anantapur">Anantapur</option>
+            <option value="Warangal">Warangal</option>
+            <option value="Bengaluru Rural">Bengaluru Rural</option>
+          </select>
+        </div>
+      </div>
+
+    </div><!-- /upload-grid-2 -->
+
+    <!-- ── Upload action ─────────────────────────────────────────────────── -->
+    <div class="card mt-4" data-reveal>
+      <div id="upload-global-status"></div>
+      <div style="display:flex;justify-content:center;margin-top:var(--s2)">
+        <button class="btn btn--primary btn--lg" id="upload-submit-btn" type="button" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Run Virtual Breeding
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Dataset Validation Report ────────────────────────────────────── -->
+    <div id="validation-report" class="hidden mt-4" data-reveal></div>
+
+    <!-- ── Train Section ─────────────────────────────────────────────────── -->
+    </main>
+
+  <script src="js/auth.js?v=2"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/api.js?v=2"></script>
+  <script src="js/upload.js?v=3"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      requireAuth('login.html');
+      if (typeof initNav === 'function') initNav();
+    });
+  </script>
+</body>
+</html>

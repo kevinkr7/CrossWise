@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Dataset — BreedAI Framework{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:960px;margin:var(--s6) auto">
+
+  <div class="page-header" data-reveal>
+    <div class="page-header__eyebrow"><span class="tag">Step 1 of 3</span></div>
+    <h1 class="page-header__title">Upload & Train</h1>
+    <p class="page-header__sub">Upload your SNP genotype CSV dataset, validate schema, and train the AI model.</p>
+  </div>
+
+  <div id="existing-dataset-info" data-reveal></div>
+
+  <div class="card mt-6" data-reveal data-reveal-delay="1">
+    <div class="card__header">
+      <div>
+        <div class="card__title">Dataset Upload</div>
+        <div class="card__subtitle">CSV with SNP_* columns, environmental features, and target traits</div>
+      </div>
+    </div>
+
+    <div class="upload-zone" id="upload-zone" role="button" tabindex="0" aria-label="Upload CSV file">
+      <div class="upload-zone__icon">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+      <div class="upload-zone__title">Drop CSV file here or click to browse</div>
+      <div class="upload-zone__hint">Supports synthetic_maize_dataset.csv or any compatible SNP CSV file</div>
+      <div class="upload-zone__format">.csv up to 50 MB</div>
+      <input type="file" id="file-input" accept=".csv" aria-label="Choose CSV file">
+    </div>
+
+    <div id="upload-status"></div>
+    <div id="validation-result"></div>
+  </div>
+
+  <div id="train-section" class="hidden mt-6" data-reveal>
+    <div class="card card--glow">
+      <div class="card__header">
+        <div>
+          <div class="card__title">Train AI Model</div>
+          <div class="card__subtitle">Random Forest with multi-output trait prediction.</div>
+        </div>
+      </div>
+
+      <div class="stepper" id="pipeline-stepper">
+        <div class="step-item"><div class="step-dot">1</div><div class="step-label">Load</div></div>
+        <div class="step-item"><div class="step-dot">2</div><div class="step-label">Encode</div></div>
+        <div class="step-item"><div class="step-dot">3</div><div class="step-label">Split</div></div>
+        <div class="step-item"><div class="step-dot">4</div><div class="step-label">Train</div></div>
+        <div class="step-item"><div class="step-dot">5</div><div class="step-label">Save</div></div>
+      </div>
+
+      <div style="display:flex;gap:var(--s3);margin-top:var(--s4);flex-wrap:wrap">
+        <button class="btn btn--primary btn--lg" id="train-btn" type="button">
+          Train Model
+        </button>
+        <a href="{{ url_for('views.recommend') }}" class="btn btn--ghost btn--lg">
+          Skip to Recommendations →
+        </a>
+      </div>
+
+      <div id="train-status"></div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}

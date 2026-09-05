@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Get Started — HybridCrop{% endblock %}
+
+{% block content %}
+<main class="auth-page">
+  <div class="auth-illustration">
+    <div class="auth-illustration__content">
+      <h2 style="font-family:var(--ff-display);font-size:var(--t-3xl);color:white;margin-bottom:var(--s4)">
+        Predict tomorrow's agriculture
+      </h2>
+      <p style="color:var(--sage-200);font-size:var(--t-lg)">
+        Create your free research account to analyze parent DNA sequences and output multi-trait cultivar predictions.
+      </p>
+    </div>
+  </div>
+
+  <div class="auth-panel">
+    <div style="width:100%;max-width:400px">
+      <div class="tag mb-3">Create Account</div>
+      <h1 class="auth-title">Get started with HybridCrop</h1>
+      <p class="auth-sub">Free account setup — no credit card required.</p>
+
+      <form id="register-form" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label class="form-label" for="reg-name">Full Name</label>
+          <input type="text" id="reg-name" class="form-input" placeholder="Kevin" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email Address</label>
+          <input type="email" id="reg-email" class="form-input" placeholder="kevin@example.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Password</label>
+          <input type="password" id="reg-password" class="form-input" placeholder="At least 6 characters" required>
+        </div>
+
+        <div id="auth-error" class="form-error" style="display:none;margin-bottom:var(--s4)"></div>
+
+        <button type="submit" class="btn btn--primary btn--lg w-full" style="justify-content:center">
+          Create Account & Start
+        </button>
+      </form>
+
+      <div style="margin-top:var(--s6);font-size:var(--t-sm);color:var(--muted);text-align:center">
+        Already have an account? <a href="{{ url_for('views.login') }}" style="color:var(--sage-700);font-weight:600">Sign in</a>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function handleRegister(e) {
+    e.preventDefault();
+    const name = document.getElementById('reg-name').value;
+    const email = document.getElementById('reg-email').value;
+    const password = document.getElementById('reg-password').value;
+    const err = document.getElementById('auth-error');
+
+    if (!name || !email || !password) {
+      err.textContent = 'Please fill in all fields.';
+      err.style.display = 'block';
+      return;
+    }
+
+    const user = registerUser(name, email, password);
+    showToast(`Account created successfully! Welcome, ${user.name}.`, 'success');
+    setTimeout(() => {
+      window.location.href = "{{ url_for('views.tool') }}";
+    }, 500);
+  }
+</script>
+{% endblock %}

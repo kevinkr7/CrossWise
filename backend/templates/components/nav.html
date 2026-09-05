@@ -1,0 +1,41 @@
+<!-- ═══════ SERVER-DRIVEN NAVBAR COMPONENT ═══════════════════════════════════ -->
+<nav class="nav" id="main-nav" role="navigation" aria-label="Main navigation">
+  <div class="nav__inner">
+
+    <a href="{{ url_for('views.home') }}" class="nav__brand" aria-label="HCP Home">
+      <svg class="nav__brand-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M16 28 C10 22 4 18 4 11 C4 7 8 4 12 5 C14 5.5 15.5 6.5 16 8 C16.5 6.5 18 5.5 20 5 C24 4 28 7 28 11 C28 18 22 22 16 28Z" fill="currentColor" opacity="0.85"/>
+        <path d="M16 15 L16 28" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+        <path d="M16 18 L12 15" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+        <path d="M16 21 L20 18" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+      </svg>
+      <span class="nav__brand-name">CrossWise</span>
+    </a>
+
+    <button class="nav__hamburger" id="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="nav__links" id="nav-links" role="menubar">
+      <a href="{{ url_for('views.home') }}" class="nav__link {% if active_page == 'home' %}nav__link--active{% endif %}" role="menuitem">Home</a>
+      <a href="{{ url_for('views.about') }}" class="nav__link {% if active_page == 'about' %}nav__link--active{% endif %}" role="menuitem">About</a>
+      <a href="{{ url_for('views.upload') }}" class="nav__link {% if active_page == 'upload' %}nav__link--active{% endif %}" role="menuitem">Virtual Breeding</a>
+      <a href="{{ url_for('views.dashboard') }}" class="nav__link {% if active_page == 'dashboard' %}nav__link--active{% endif %}" role="menuitem">Dashboard</a>
+      <a href="{{ url_for('views.analytics') }}" class="nav__link {% if active_page == 'analytics' %}nav__link--active{% endif %}" role="menuitem">Analytics</a>
+    </div>
+
+    <div class="nav__auth">
+      <span class="nav__user" id="nav-user-badge" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span id="nav-user-name">User</span>
+      </span>
+      <a href="{{ url_for('views.login') }}" class="nav__link {% if active_page == 'login' %}nav__link--active{% endif %}" id="nav-signin-link">Sign in</a>
+      <a href="{{ url_for('views.register') }}" class="btn btn--nav-filled {% if active_page == 'register' %}nav__link--active{% endif %}" id="nav-getstarted-link">Get started</a>
+      <button class="btn btn--nav-outline" id="nav-signout-btn" style="display:none" onclick="logoutUser()">Sign out</button>
+    </div>
+
+  </div>
+</nav>

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Explainability (SHAP) — BreedAI Framework{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:1100px;margin:var(--s6) auto">
+
+  <div class="page-header" data-reveal>
+    <div class="page-header__eyebrow"><span class="tag">Step 3 of 3</span></div>
+    <h1 class="page-header__title">Explainable AI (SHAP)</h1>
+    <p class="page-header__sub">TreeExplainer SHAP values reveal which SNP markers and environmental features drive each breeding recommendation.</p>
+  </div>
+
+  <div id="shap-loading" class="card mb-4 text-center" style="padding:var(--s12)">
+    <div class="spinner spinner--lg" style="margin:0 auto var(--s4)"></div>
+    <div class="loading-text">Computing SHAP values… This may take a few seconds.</div>
+  </div>
+
+  <div class="card mb-4" data-reveal>
+    <div class="card__header">
+      <div>
+        <div class="card__title">Global Feature Importance</div>
+        <div class="card__subtitle">Mean |SHAP| value averaged across all predictions</div>
+      </div>
+      <span class="tag">Top Features</span>
+    </div>
+    <div id="importance-chart" style="margin-top:var(--s4)">
+      <div class="skeleton" style="height:320px;border-radius:var(--r-lg)"></div>
+    </div>
+  </div>
+
+  <div class="card mb-4" data-reveal>
+    <div class="card__header">
+      <div class="card__title">Feature Importance Ranking</div>
+      <div class="card__subtitle">SNP markers ordered by mean absolute SHAP contribution</div>
+    </div>
+    <div id="importance-list" style="margin-top:var(--s4)">
+      <div class="skeleton" style="height:200px;border-radius:var(--r-lg)"></div>
+    </div>
+  </div>
+
+  <div class="card mb-4" data-reveal>
+    <div class="card__header">
+      <div class="card__title">SHAP Summary Beeswarm Plot</div>
+      <div class="card__subtitle">Red = High feature value (A/A allele), Blue = Low feature value (B/B allele).</div>
+    </div>
+    <div id="summary-plot" style="margin-top:var(--s4)">
+      <div class="skeleton" style="height:380px;border-radius:var(--r-lg)"></div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/explainability.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CrossWise — Predict Tomorrow's Agriculture{% endblock %}</title>
+  <meta name="description" content="{% block description %}CrossWise uses SNP genomic machine learning to predict optimal hybrid maize parent combinations.{% endblock %}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/icons/leaf.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Server-Driven Navigation Bar -->
+  {% include 'components/nav.html' %}
+
+  <div class="nav-spacer"></div>
+
+  <!-- Dynamic Content Block -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Server-Driven Footer Component -->
+  {% include 'components/footer.html' %}
+
+  <!-- Core JavaScript Pipeline -->
+  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const u = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+      if (u) {
+        const badge = document.getElementById('nav-user-badge');
+        const uname = document.getElementById('nav-user-name');
+        const signin = document.getElementById('nav-signin-link');
+        const getstart = document.getElementById('nav-getstarted-link');
+        const signout = document.getElementById('nav-signout-btn');
+        if (badge) badge.style.display = 'inline-flex';
+        if (uname) uname.textContent = u.name ? u.name.split(' ')[0] : 'User';
+        if (signin) signin.style.display = 'none';
+        if (getstart) getstart.style.display = 'none';
+        if (signout) signout.style.display = 'inline-flex';
+      }
+    });
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

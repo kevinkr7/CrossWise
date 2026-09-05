@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Recommendation Engine — BreedAI Framework{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:1100px;margin:var(--s6) auto">
+
+  <div class="page-header" data-reveal>
+    <div class="page-header__eyebrow"><span class="tag">Step 2 of 3</span></div>
+    <h1 class="page-header__title">Recommendation Engine</h1>
+    <p class="page-header__sub">Generate virtual parent combinations and rank by AI-predicted multi-trait composite score.</p>
+  </div>
+
+  <div class="card mb-4" data-reveal data-reveal-delay="1">
+    <div class="card__header">
+      <div class="card__title">Recommendation Parameters</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--s4)">
+      <div class="form-group">
+        <label class="form-label" for="top-n-select">Top N Results</label>
+        <select class="form-select" id="top-n-select">
+          <option value="5" selected>Top 5</option>
+          <option value="10">Top 10</option>
+          <option value="15">Top 15</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="location-filter">Environment Filter (optional)</label>
+        <select class="form-select" id="location-filter">
+          <option value="">All Environments</option>
+          <option value="Coimbatore">Coimbatore, TN</option>
+          <option value="Mandya">Mandya, Karnataka</option>
+          <option value="Davangere">Davangere, Karnataka</option>
+          <option value="Anantapur">Anantapur, AP</option>
+          <option value="Warangal">Warangal, Telangana</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Scoring Weights</label>
+        <div style="font-size:var(--t-xs);color:var(--muted);line-height:1.8;font-family:var(--font-mono)">
+          Yield: 35% · Drought: 20% · Disease: 15%<br>Quality: 15% · Maturity: 5% · Compat: 10%
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:var(--s4);display:flex;gap:var(--s3);flex-wrap:wrap;align-items:center">
+      <button class="btn btn--primary btn--lg" id="recommend-btn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Generate Recommendations
+      </button>
+      <button class="btn btn--secondary" id="export-rec-btn" type="button">
+        Export CSV
+      </button>
+      <a href="{{ url_for('views.explainability') }}" class="btn btn--ghost hidden" id="goto-xai-btn">View SHAP XAI →</a>
+    </div>
+  </div>
+
+  <div id="rec-error" class="hidden mb-4"></div>
+
+  <div id="rec-results" class="hidden">
+    <div id="rec-summary-banner" class="mb-4"></div>
+    <div id="top-pair-highlight" class="mb-4"></div>
+
+    <div class="card" data-reveal>
+      <div class="card__header">
+        <div>
+          <div class="card__title">Top Parent Recommendations</div>
+        </div>
+      </div>
+      <div class="rec-table-wrapper">
+        <table class="rec-table" id="rec-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Hybrid Combination</th>
+              <th>Yield (t/ha)</th>
+              <th>Drought</th>
+              <th>Disease</th>
+              <th>Quality</th>
+              <th>Maturity</th>
+              <th>Score</th>
+              <th>Confidence</th>
+            </tr>
+          </thead>
+          <tbody id="rec-table-body">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/recommend.js') }}"></script>
+{% endblock %}

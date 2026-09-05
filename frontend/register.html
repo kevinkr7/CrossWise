@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account — CrossWise</title>
+  <meta name="description" content="Register for a free CrossWise account to access the maize hybrid prediction tool.">
+  <link rel="icon" type="image/png" href="assets/icons/leaf.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="auth-page">
+
+  <!-- ── Left: Form ──────────────────────────────────────────────────────── -->
+  <div class="auth-panel">
+    <div class="auth-form-wrap">
+
+      <a href="index.html" class="auth-back">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to home
+      </a>
+
+      <h1 class="auth-title">Create your account</h1>
+      <p class="auth-subtitle">
+        Already have one? <a href="login.html">Sign in instead</a>
+      </p>
+
+      <form class="auth-form" id="register-form" novalidate>
+
+        <div class="form-group">
+          <label class="form-label" for="name">Full name</label>
+          <input type="text" id="name" name="name" class="form-input"
+                 placeholder="Jane Smith" autocomplete="name" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email address</label>
+          <input type="email" id="email" name="email" class="form-input"
+                 placeholder="you@example.com" autocomplete="email" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input type="password" id="password" name="password" class="form-input"
+                 placeholder="At least 6 characters" autocomplete="new-password" required minlength="6">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="confirm-password">Confirm password</label>
+          <input type="password" id="confirm-password" name="confirm-password" class="form-input"
+                 placeholder="Re-enter your password" autocomplete="new-password" required>
+        </div>
+
+        <div id="register-error" class="form-error" role="alert" aria-live="assertive"></div>
+
+        <button type="submit" class="btn btn--primary auth-submit" id="register-btn">
+          Create account
+        </button>
+
+      </form>
+
+      <p class="auth-footer-note" style="margin-top: var(--s4); font-size: var(--t-xs); color: var(--faint);">
+        Your data stays in your browser. No servers store your credentials.
+      </p>
+
+    </div>
+  </div>
+
+  <!-- ── Right: Botanical Illustration ──────────────────────────────────── -->
+  <div class="auth-illustration" aria-hidden="true">
+
+    <div class="auth-illustration-svg">
+      <svg viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+        <!-- Two intertwining stems for "hybridisation" metaphor -->
+        <!-- Stem 1 (left) -->
+        <path d="M110 260 C108 220 112 180 100 120 C94 90 88 65 105 42" stroke="rgba(175,201,178,.5)" stroke-width="2" stroke-linecap="round"/>
+        <!-- Stem 2 (right) -->
+        <path d="M170 260 C172 220 168 180 180 120 C186 90 192 65 175 42" stroke="rgba(175,201,178,.4)" stroke-width="2" stroke-linecap="round"/>
+        <!-- Cross connections (hybridisation) -->
+        <path d="M108 220 C130 215 150 215 172 220" stroke="rgba(175,201,178,.3)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M104 170 C125 162 155 162 176 170" stroke="rgba(175,201,178,.3)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M100 130 C122 118 158 118 180 130" stroke="rgba(175,201,178,.25)" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Leaves left stem -->
+        <ellipse cx="92" cy="150" rx="20" ry="9" fill="rgba(175,201,178,.2)" transform="rotate(-45 92 150)"/>
+        <ellipse cx="96" cy="105" rx="18" ry="8" fill="rgba(175,201,178,.18)" transform="rotate(-35 96 105)"/>
+        <!-- Leaves right stem -->
+        <ellipse cx="188" cy="150" rx="20" ry="9" fill="rgba(175,201,178,.2)" transform="rotate(45 188 150)"/>
+        <ellipse cx="184" cy="105" rx="18" ry="8" fill="rgba(175,201,178,.18)" transform="rotate(35 184 105)"/>
+        <!-- Merged top bud (hybrid) -->
+        <path d="M105 42 C120 30 160 30 175 42" stroke="rgba(175,201,178,.4)" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="140" cy="26" r="18" fill="rgba(175,201,178,.2)" stroke="rgba(175,201,178,.4)" stroke-width="1.5"/>
+        <circle cx="140" cy="26" r="9" fill="rgba(175,201,178,.45)"/>
+        <!-- Junction dots -->
+        <circle cx="110" cy="220" r="4" fill="rgba(175,201,178,.6)"/>
+        <circle cx="170" cy="220" r="4" fill="rgba(175,201,178,.6)"/>
+        <circle cx="106" cy="170" r="4" fill="rgba(175,201,178,.5)"/>
+        <circle cx="174" cy="170" r="4" fill="rgba(175,201,178,.5)"/>
+        <circle cx="102" cy="130" r="4" fill="rgba(175,201,178,.4)"/>
+        <circle cx="178" cy="130" r="4" fill="rgba(175,201,178,.4)"/>
+        <!-- Ground roots -->
+        <path d="M110 260 C100 254 85 257 70 264" stroke="rgba(175,201,178,.2)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M170 260 C180 254 195 257 210 264" stroke="rgba(175,201,178,.2)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="auth-quote">
+      <p class="auth-quote__text">"Hybridisation is nature's own algorithm for resilience."</p>
+      <p class="auth-quote__attr">— CrossWise Research Team</p>
+    </div>
+
+  </div>
+
+</div><!-- auth-page -->
+
+<script src="js/auth.js?v=2"></script>
+<script>
+  // Redirect if already logged in
+  if (isLoggedIn()) { window.location.href = 'upload.html'; }
+
+  document.getElementById('register-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const name     = document.getElementById('name').value.trim();
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirm  = document.getElementById('confirm-password').value;
+    const errorEl  = document.getElementById('register-error');
+    const btn      = document.getElementById('register-btn');
+
+    errorEl.textContent = '';
+    errorEl.classList.remove('visible');
+
+    // Client-side validation
+    if (!name || !email || !password || !confirm) {
+      errorEl.textContent = 'Please fill in all fields.';
+      errorEl.classList.add('visible');
+      return;
+    }
+
+    if (password.length < 6) {
+      errorEl.textContent = 'Password must be at least 6 characters.';
+      errorEl.classList.add('visible');
+      return;
+    }
+
+    if (password !== confirm) {
+      errorEl.textContent = 'Passwords do not match.';
+      errorEl.classList.add('visible');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      errorEl.textContent = 'Please enter a valid email address.';
+      errorEl.classList.add('visible');
+      return;
+    }
+
+    btn.textContent = 'Creating account…';
+    btn.disabled = true;
+
+    const result = await registerUser(name, email, password);
+
+    if (result.ok) {
+      btn.textContent = '✓ Account created!';
+      setTimeout(() => { window.location.href = 'upload.html'; }, 600);
+    } else {
+      errorEl.textContent = result.error;
+      errorEl.classList.add('visible');
+      btn.textContent = 'Create account';
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,1058 +1,345 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hybrid Crop Predictor</title>
-    <link rel="icon" type="image/png" href="assets/icons/leaf.png">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #e0f7e9 0%, #f9f9f9 100%);
-            overflow-x: hidden;
-            min-height: 100vh;
-            position: relative;
-        }
-
-        .floating-leaf {
-            position: absolute;
-            top: -50px;
-            width: 40px;
-            height: 40px;
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/36/Leaf_icon_2.svg');
-            background-size: contain;
-            background-repeat: no-repeat;
-            opacity: 0.3;
-            animation: floatLeaves 20s linear infinite;
-        }
-
-        @keyframes floatLeaves {
-            0% { transform: translateX(0) translateY(0) rotate(0deg); }
-            50% { transform: translateX(100vw) translateY(50vh) rotate(180deg); }
-            100% { transform: translateX(0vw) translateY(100vh) rotate(360deg); }
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08); /* only bottom direction */
-            max-width: 900px;
-            margin: 80px auto;
-            text-align: center;
-        }
-
-        h1 {
-            color: #2e7d32;
-            margin-bottom: 10px;
-            text-shadow: 1px 1px 2px #ccc;
-        }
-
-        p {
-            color: #555;
-            margin-bottom: 30px;
-        }
-
-        .selection-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .selection-buttons button {
-            padding: 12px 28px;
-            font-size: 16px;
-            border: none;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #81c784, #66bb6a);
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .selection-buttons button:hover {
-            transform: scale(1.05);
-            background: linear-gradient(135deg, #66bb6a, #43a047);
-        }
-
-        .input-section, .results-section {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            display: none;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 1s ease forwards;
-        }
-
-        .parent-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-        }
-
-        .parent {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        label {
-            font-weight: 600;
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-        }
-
-        input[type="number"], input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        #predict-btn, #reset-btn {
-            width: 45%;
-            padding: 14px;
-            font-size: 16px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            background: linear-gradient(135deg, #66bb6a, #43a047);
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        #predict-btn:hover, #reset-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .buttons-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .result-item {
-            background: rgba(255, 255, 255, 0.85);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 12px 0;
-            display: flex;
-            justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        .loading, .error {
-            text-align: center;
-            margin: 10px 0;
-            font-weight: bold;
-            color: #43a047;
-        }
-        
-        .error {
-            color: #e53935; /* Red for errors */
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Enhanced Styles for New Features */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.4);
-        }
-
-        .modal-content {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            margin: 5% auto; /* Brings it upwards */
-            padding: 30px;
-            width: 90%;
-            max-width: 500px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: var(--shadow-strong);
-            animation: modalSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            position: relative;
-            overflow-y: auto;
-            max-height: 85vh; /* Keeps it from overflowing */
-        }
-
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover {
-            color: black;
-        }
-
-        .progress-container {
-            width: 100%;
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            width: 0%;
-            height: 30px;
-            background: linear-gradient(135deg, #66bb6a, #43a047);
-            transition: width 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-
-        .balance-btn, .export-json-btn, .download-report-btn, .version-btn {
-            padding: 8px 16px;
-            font-size: 14px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            background: linear-gradient(135deg, #81c784, #66bb6a);
-            color: white;
-            margin: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .balance-btn:hover, .export-json-btn:hover, 
-        .download-report-btn:hover, .version-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .footer {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            color: #666;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrossWise — Predict Tomorrow's Agriculture</title>
+  <meta name="description" content="CrossWise uses machine learning and DNA sequence analysis to predict the most viable maize hybrid cultivars. Upload SNP genotype data to train Random Forest models for predicting crop traits.">
+  <link rel="icon" type="image/png" href="assets/icons/leaf.png">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="floating-leaf" style="left:5%; top:-30px; animation-delay:0s;"></div>
-    <div class="floating-leaf" style="left:12%; top:-210px; animation-delay:1.5s;"></div>
-    <div class="floating-leaf" style="left:20%; top:-60px; animation-delay:3s;"></div>
-    <div class="floating-leaf" style="left:35%; top:-80px; animation-delay:0.8s;"></div>
-    <div class="floating-leaf" style="left:45%; top:-40px; animation-delay:2.5s;"></div>
-    <div class="floating-leaf" style="left:55%; top:-120px; animation-delay:4.5s;"></div>
-    <div class="floating-leaf" style="left:68%; top:-70px; animation-delay:1.2s;"></div>
-    <div class="floating-leaf" style="left:75%; top:-20px; animation-delay:3.8s;"></div>
-    <div class="floating-leaf" style="left:85%; top:-90px; animation-delay:2s;"></div>
-    <div class="floating-leaf" style="left:95%; top:-50px; animation-delay:0.5s;"></div>
 
+  <!-- Navbar injected by nav.js -->
 
+  <div class="nav-spacer"></div>
+
+  <!-- ═══════ HERO ═══════════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="container hero__container">
+
+      <div class="hero__content" data-reveal>
+        <div class="hero__eyebrow">
+          <span class="hero__eyebrow-dot"></span>
+          DNA-driven crop intelligence
+        </div>
+
+        <h1 class="hero__title">
+          Predict the next<br>
+          great <em>hybrid cultivar</em>
+        </h1>
+
+        <p class="hero__subtitle">
+          Upload SNP genotype datasets — our ML model returns yield potential, GC content, SNP count, and resistance scores in seconds.
+        </p>
+
+        <div class="hero__actions">
+          <a href="register.html" class="btn btn--primary btn--lg">
+            <svg viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
+            Start predicting
+          </a>
+          <a href="about.html" class="btn btn--secondary btn--lg">Learn how it works</a>
+        </div>
+
+        <p class="hero__note">No account? Try the <a href="register.html" style="color:var(--sage-600);border-bottom:1px solid var(--sage-300)">free tier</a> — no card required.</p>
+      </div>
+
+      <!-- Hero visual — animated result card -->
+      <div class="hero__visual" data-reveal data-reveal-delay="2">
+        <div class="hero__card-stack">
+
+          <!-- Back card: DNA sequence visualization -->
+          <div class="hero__card hero__card--back">
+            <div class="card-dna-label">SNP Genotype Input</div>
+            <div class="card-dna-seq" id="dna-display">
+              ATGCATCGATCGATCG<br>
+              GCTAGCTAGCTAGCTA<br>
+              TGCATGCATGCATGCA<br>
+              CGTAGCTAGCTAGCTA
+            </div>
+          </div>
+
+          <!-- Front card: Prediction result -->
+          <div class="hero__card hero__card--front">
+            <div class="hero-result-label">Prediction Result</div>
+            <div class="hero-result-crop" id="hero-crop-name">Maize-H482</div>
+
+            <div class="hero-result-bar">
+              <div class="hero-result-bar-label">
+                <span>Drought Resistance</span><span id="dr-pct">78%</span>
+              </div>
+              <div class="hero-result-bar-track">
+                <div class="hero-result-bar-fill" id="dr-bar" style="width:78%"></div>
+              </div>
+            </div>
+
+            <div class="hero-result-bar">
+              <div class="hero-result-bar-label">
+                <span>Disease Resistance</span><span id="dis-pct">64%</span>
+              </div>
+              <div class="hero-result-bar-track">
+                <div class="hero-result-bar-fill" id="dis-bar" style="width:64%"></div>
+              </div>
+            </div>
+
+            <div class="hero-result-bar">
+              <div class="hero-result-bar-label">
+                <span>Yield Potential</span><span id="yp-pct">91%</span>
+              </div>
+              <div class="hero-result-bar-track">
+                <div class="hero-result-bar-fill" id="yp-bar" style="width:91%"></div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- card-stack -->
+      </div><!-- hero__visual -->
+
+    </div><!-- container -->
+  </section>
+
+  <div class="hero__scroll-cue" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    Scroll to explore
+  </div>
+
+  <!-- ═══════ FEATURES ════════════════════════════════════════════════════════ -->
+  <section class="section section--alt">
     <div class="container">
-        <h1><i class="fas fa-seedling"></i> Hybrid Crop Predictor</h1>
-        <p>Predict the best hybrid crop combinations through AI-driven insights</p>
 
-        <div class="selection-buttons">
-            <button id="upload-btn"><i class="fas fa-upload"></i> Upload DNA Sequences</button>
-            <button id="manual-btn"><i class="fas fa-keyboard"></i> Enter Nucleotide Values</button>
+      <div class="section-header" data-reveal>
+        <span class="tag">Capabilities</span>
+        <h2 class="section-title">Everything you need to evaluate a hybrid</h2>
+        <p class="section-subtitle">From raw DNA to actionable breeding insight, in one workflow.</p>
+      </div>
+
+      <div class="features-grid">
+
+        <div class="feature-card" data-reveal data-reveal-delay="1">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+          </div>
+          <h3 class="feature-title">SNP Data Upload</h3>
+          <p class="feature-desc">Upload raw SNP genotype .csv datasets. The tool parses, validates, and extracts markers automatically.</p>
         </div>
 
-        <div id="upload-section" class="input-section">
-            <h3><i class="fas fa-dna"></i> Upload DNA Sequences (FASTA Format)</h3>
-            <div class="input-group">
-                <label for="parent1">Parent 1 FASTA File:</label>
-                <input type="file" id="parent1" accept=".fasta,.fa">
-            </div>
-            <div class="input-group">
-                <label for="parent2">Parent 2 FASTA File:</label>
-                <input type="file" id="parent2" accept=".fasta,.fa">
-            </div>
+        <div class="feature-card" data-reveal data-reveal-delay="2">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 4v16"/></svg>
+          </div>
+          <h3 class="feature-title">ML Prediction Engine</h3>
+          <p class="feature-desc">A trained machine learning model evaluates nucleotide composition patterns across known maize hybrids to output resistance and yield scores.</p>
         </div>
 
-        <div id="manual-section" class="input-section">
-            <h3><i class="fas fa-keyboard"></i> Manual Nucleotide Input</h3>
-            <div class="parent-container">
-                <div class="parent">
-                    <h4>Parent 1 Composition</h4>
-                    <div class="input-group">
-                        <label>Adenine (A):</label>
-                        <input type="number" id="parent1_a" step="0.01" min="0" max="1" value="0.25">
-                    </div>
-                    <div class="input-group">
-                        <label>Thymine (T):</label>
-                        <input type="number" id="parent1_t" step="0.01" min="0" max="1" value="0.25">
-                    </div>
-                    <div class="input-group">
-                        <label>Guanine (G):</label>
-                        <input type="number" id="parent1_g" step="0.01" min="0" max="1" value="0.25">
-                    </div>
-                    <div class="input-group">
-                        <label>Cytosine (C):</label>
-                        <input type="number" id="parent1_c" step="0.01" min="0" max="1" value="0.25">
-                    </div>
-                    <button class="balance-btn" onclick="autoBalance('parent1')">
-                        <i class="fas fa-balance-scale"></i> Auto Balance
-                    </button>
-                </div>
-                <div class="parent">
-                    <h4>Parent 2 Composition</h4>
-                    <div class="input-group">
-                        <label>Adenine (A):</label>
-                        <input type="number" id="parent2_a" step="0.01" min="0" max="1" value="0.25">
-                    </div>
-                    <div class="input-group">
-                        <label>Thymine (T):</label>
-                        <input type="number" id="parent2_t" step="0.01" min="0" max="1" value="0.25">
-                    </div>
-                    <div class="input-group">
-                        <label>Guanine (G):</label>
-                        <input type="number" id="parent2_g" step="0.01" min="0" max="1" value="0.25">
-                    </div>
-                    <div class="input-group">
-                        <label>Cytosine (C):</label>
-                        <input type="number" id="parent2_c" step="0.01" min="0" max="1" value="0.25">
-                    </div>
-                    <button class="balance-btn" onclick="autoBalance('parent2')">
-                        <i class="fas fa-balance-scale"></i> Auto Balance
-                    </button>
-                </div>
-            </div>
-            <div style="text-align: center; margin-top: 20px;">
-                <button class="export-json-btn" onclick="exportInputAsJSON()">
-                    <i class="fas fa-download"></i> Export Input as JSON
-                </button>
-            </div>
+        <div class="feature-card" data-reveal data-reveal-delay="3">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h3 class="feature-title">SNP Analysis</h3>
+          <p class="feature-desc">Counts single-nucleotide polymorphisms between the two parent sequences — a key indicator of genetic diversity and heterosis potential.</p>
         </div>
 
-        <div class="buttons-container">
-            <button id="predict-btn" style="display:none;"><i class="fas fa-leaf"></i> Predict Hybrid</button>
-            <button id="reset-btn" style="display:none;"><i class="fas fa-undo"></i> Reset</button>
+        <div class="feature-card" data-reveal data-reveal-delay="1">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h3 class="feature-title">GC Content Profiling</h3>
+          <p class="feature-desc">GC content strongly correlates with thermal stability and gene density. Results are reported as a percentage per hybrid with visual interpretation.</p>
         </div>
 
-        <div id="progress-container" class="progress-container" style="display:none;">
-            <div id="progress-bar" class="progress-bar">0%</div>
+        <div class="feature-card" data-reveal data-reveal-delay="2">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <h3 class="feature-title">Downloadable Reports</h3>
+          <p class="feature-desc">Export full prediction results as a structured CSV report — ready for lab documentation, field trials, or further statistical analysis.</p>
         </div>
 
-        <div id="loading" class="loading" style="display:none;">
-            <i class="fas fa-spinner fa-spin"></i> Processing Prediction...
+        <div class="feature-card" data-reveal data-reveal-delay="3">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/></svg>
+          </div>
+          <h3 class="feature-title">Virtual Crossbreeding</h3>
+          <p class="feature-desc">Simulate virtual parent pairings to generate thousands of combinations and rank them across 5 traits.</p>
         </div>
 
-        <div id="error" class="error"></div>
-
-        <div class="results-section">
-            <h3><i class="fas fa-chart-line"></i> Prediction Results</h3>
-            <div class="result-item">
-                <span>Hybrid Crop:</span><span id="result-crop">-</span>
-            </div>
-            <div class="result-item">
-                <span>GC Content (%):</span><span id="result-gc">-</span>
-            </div>
-            <div class="result-item">
-                <span>SNP Count:</span><span id="result-snp">-</span>
-            </div>
-            <div class="result-item">
-                <span>Yield Potential (kg/ha):</span><span id="result-yield">-</span>
-            </div>
-            <div class="result-item">
-                <span>Drought Resistance:</span><span id="result-drought">-</span>
-            </div>
-            <div class="result-item">
-                <span>Disease Resistance:</span><span id="result-disease">-</span>
-            </div>
-            <div style="text-align: center; margin-top: 20px;">
-                <button class="download-report-btn" onclick="downloadReport()">
-                    <i class="fas fa-file-download"></i> Download Report
-                </button>
-            </div>
-        </div>
+      </div>
     </div>
+  </section>
 
-    <div id="confirmation-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h3>Confirm Input Summary</h3>
-            <div id="input-summary"></div>
-            <div style="margin-top: 20px;">
-                <button style="background: #43a047; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin: 5px; cursor: pointer;" onclick="confirmPrediction()">
-                    Confirm & Predict
-                </button>
-                <button style="background: #f44336; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin: 5px; cursor: pointer;" onclick="closeModal()">
-                    Cancel
-                </button>
-            </div>
+  <!-- ═══════ HOW IT WORKS ════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header" data-reveal>
+        <span class="tag">Process</span>
+        <h2 class="section-title">Three steps from DNA to decision</h2>
+        <p class="section-subtitle">Designed for researchers who want depth without complexity.</p>
+      </div>
+
+      <div class="steps-list" data-reveal>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3 class="step-title">Provide parent genetic data</h3>
+            <p class="step-desc">Upload SNP genotype data and optional phenotypic datasets. The tool validates the input and normalizes features automatically.</p>
+          </div>
         </div>
-    </div>
 
-    <div class="footer">
-        <span onclick="showVersionInfo()" style="cursor: pointer;">
-            Hybrid Crop Predictor v1.2 | © 2025 Kevin & Maha
-        </span>
-    </div>
-
-    <div id="version-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeVersionModal()">&times;</span>
-            <h3>About Hybrid Crop Predictor</h3>
-            <p><strong>Version:</strong> 1.2</p>
-            <p><strong>Developers:</strong> Kevin & Maha</p>
-            <p><strong>Year:</strong> 2025</p>
-            <p><strong>Description:</strong> AI-driven tool for predicting hybrid crop characteristics based on DNA sequence analysis and nucleotide composition.</p>
-            <p><strong>Features:</strong> FASTA upload, manual input, SNP analysis, downloadable reports, and more.</p>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3 class="step-title">Run the prediction</h3>
+            <p class="step-desc">The data is sent to a Python/Flask backend where a trained ML model computes the most likely hybrid cultivar name, GC content, SNP count, yield potential, and resistance scores.</p>
+          </div>
         </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3 class="step-title">Interpret and export</h3>
+            <p class="step-desc">Results are presented in a clean summary view with visual resistance indicators. Download a dated CSV report or export your input as JSON for experiment logging.</p>
+          </div>
+        </div>
+
+      </div>
     </div>
+  </section>
 
-    <script>
-        const API_BASE = "http://127.0.0.1:5000";
-        // Global variables for enhanced features
-        let currentInputData = {};
-        let fastaSequences = { parent1: '', parent2: '' };
+  <!-- ═══════ STATS ═══════════════════════════════════════════════════════════ -->
+  <div class="stats-band">
+    <div class="container">
+      <div class="stats-grid">
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize selection buttons
-            document.getElementById('upload-btn').addEventListener('click', () => selectInputMethod('upload'));
-            document.getElementById('manual-btn').addEventListener('click', () => selectInputMethod('manual'));
-            
-            // ✅ ISSUE 1 FIX: Documentation of Dependency
-            // Prediction MUST go through confirmation modal.
-            // Flow: Button Click -> Modal Shows -> User Confirms -> predictHybrid() fires
-            document.getElementById('predict-btn').addEventListener('click', showConfirmationModal);
-            
-            document.getElementById('reset-btn').addEventListener('click', resetForm);
-            
-            // Add validation to nucleotide inputs
-            const nucleotideInputs = document.querySelectorAll('input[type="number"]');
-            nucleotideInputs.forEach(input => {
-                input.addEventListener('change', validateNucleotideInputs);
-                input.addEventListener('input', saveToLocalStorage);
-            });
+        <div data-reveal>
+          <div class="stat-value">8</div>
+          <div class="stat-label">Input features<br>per prediction</div>
+        </div>
+        <div data-reveal data-reveal-delay="1">
+          <div class="stat-value">6</div>
+          <div class="stat-label">Output metrics<br>returned</div>
+        </div>
+        <div data-reveal data-reveal-delay="2">
+          <div class="stat-value">&lt;1s</div>
+          <div class="stat-label">Average prediction<br>response time</div>
+        </div>
+        <div data-reveal data-reveal-delay="3">
+          <div class="stat-value">100%</div>
+          <div class="stat-label">Client-side<br>Data validation</div>
+        </div>
 
-            // Load saved inputs from localStorage
-            loadFromLocalStorage();
-        });
+      </div>
+    </div>
+  </div>
 
-        async function predictHybrid() {
-            // ✅ ISSUE 3 FIX: Backend Contract Check
-            // Ensure your Python Backend returns JSON with EXACTLY these keys:
-            // {
-            //   "hybrid_crop": "String",
-            //   "gc_content": Number,
-            //   "snp_count": Number,
-            //   "yield_potential": Number,
-            //   "drought_resistance": Number,
-            //   "disease_resistance": Number
-            // }
+  <!-- ═══════ CTA BANNER ══════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-banner" data-reveal>
+        <h2 class="cta-banner__title">Ready to run your first prediction?</h2>
+        <p class="cta-banner__sub">Create a free account and access the predictor in under a minute.</p>
+        <div class="cta-banner__actions">
+          <a href="register.html" class="btn btn--on-dark btn--lg">Create free account</a>
+          <a href="login.html" class="btn btn--outline-on-dark btn--lg">Sign in</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-            // Show loading
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('error').textContent = '';
+  <!-- ═══════ FOOTER ══════════════════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand-name">CrossWise</div>
+          <p class="footer__brand-desc">An AI-driven tool for predicting maize hybrid characteristics from DNA sequence analysis.</p>
+        </div>
+        <div>
+          <div class="footer__col-title">Navigate</div>
+          <nav class="footer__links" aria-label="Footer navigation">
+            <a href="index.html" class="footer__link">Home</a>
+            <a href="about.html" class="footer__link">About</a>
+            <a href="upload.html" class="footer__link">Virtual Breeding</a>
+          </nav>
+        </div>
+        <div>
+          <div class="footer__col-title">Account</div>
+          <nav class="footer__links">
+            <a href="login.html" class="footer__link">Sign in</a>
+            <a href="register.html" class="footer__link">Register</a>
+          </nav>
+        </div>
+      </div>
 
-            // Enforce validation before API call
-            if (!validateNucleotideInputs()) {
-                document.getElementById('loading').style.display = 'none';
-                return;
-            }
+      <div class="footer__bottom">
+        <span>© 2025 Kevin &amp; Maha — CrossWise v1.2</span>
+        <span>Built for the Maize Hybridisation Study</span>
+      </div>
+    </div>
+  </footer>
 
-            try {
-                const payload = {
-                    Parent_1_A: parseFloat(document.getElementById("parent1_a").value),
-                    Parent_1_T: parseFloat(document.getElementById("parent1_t").value),
-                    Parent_1_G: parseFloat(document.getElementById("parent1_g").value),
-                    Parent_1_C: parseFloat(document.getElementById("parent1_c").value),
+  <script src="js/auth.js?v=2"></script>
+  <script src="js/nav.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initNav();
+      initScrollReveal();
+      initHeroAnimation();
+    });
 
-                    Parent_2_A: parseFloat(document.getElementById("parent2_a").value),
-                    Parent_2_T: parseFloat(document.getElementById("parent2_t").value),
-                    Parent_2_G: parseFloat(document.getElementById("parent2_g").value),
-                    Parent_2_C: parseFloat(document.getElementById("parent2_c").value)
-                };
+    // Animate hero bars on load
+    function initHeroAnimation() {
+      setTimeout(() => {
+        document.getElementById('dr-bar').style.width  = '78%';
+        document.getElementById('dis-bar').style.width = '64%';
+        document.getElementById('yp-bar').style.width  = '91%';
+      }, 600);
 
-                const res = await fetch(`${API_BASE}/predict/manual`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
+      // Cycle through crop names to give it life
+      const crops = ['Maize-H482', 'Maize-H219', 'Maize-H761', 'Maize-H338', 'Maize-H503'];
+      const resistances = [
+        { dr: 78, dis: 64, yp: 91 },
+        { dr: 82, dis: 71, yp: 74 },
+        { dr: 55, dis: 88, yp: 83 },
+        { dr: 91, dis: 60, yp: 96 },
+        { dr: 67, dis: 79, yp: 69 },
+      ];
+      let idx = 0;
 
-                const data = await res.json();
+      setInterval(() => {
+        idx = (idx + 1) % crops.length;
+        const r = resistances[idx];
+        const el = document.getElementById('hero-crop-name');
 
-                // Handle backend errors properly
-                if (!res.ok) {
-                    throw new Error(data.error || "Prediction failed");
-                }
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(6px)';
 
-                // ✅ ISSUE 2 FIX: Explicitly hide loading spinner before showing results
-                // This prevents the spinner from persisting or flashing
-                document.getElementById('loading').style.display = 'none';
+        setTimeout(() => {
+          el.textContent = crops[idx];
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+          document.getElementById('dr-pct').textContent  = r.dr  + '%';
+          document.getElementById('dis-pct').textContent = r.dis + '%';
+          document.getElementById('yp-pct').textContent  = r.yp  + '%';
+          document.getElementById('dr-bar').style.width  = r.dr  + '%';
+          document.getElementById('dis-bar').style.width = r.dis + '%';
+          document.getElementById('yp-bar').style.width  = r.yp  + '%';
+        }, 350);
 
-                displayResults(data);
-
-            } catch (err) {
-                // Show error on UI
-                document.getElementById("error").textContent = err.message;
-                console.error(err);
-                document.getElementById('loading').style.display = 'none'; // Hide loader on error
-            }
-        }
-
-        // Feature 5: Persistent Manual Inputs (localStorage)
-        function saveToLocalStorage() {
-            const inputs = {};
-            ['parent1_a', 'parent1_t', 'parent1_g', 'parent1_c', 
-             'parent2_a', 'parent2_t', 'parent2_g', 'parent2_c'].forEach(id => {
-                inputs[id] = document.getElementById(id).value;
-            });
-            localStorage.setItem('cropPredictorInputs', JSON.stringify(inputs));
-        }
-
-        function loadFromLocalStorage() {
-            const saved = localStorage.getItem('cropPredictorInputs');
-            if (saved) {
-                const inputs = JSON.parse(saved);
-                Object.keys(inputs).forEach(id => {
-                    const element = document.getElementById(id);
-                    if (element && inputs[id]) {
-                        element.value = inputs[id];
-                    }
-                });
-            }
-        }
-
-        // Feature 8: Auto-Balance Button
-        function autoBalance(parent) {
-            const aId = `${parent}_a`;
-            const tId = `${parent}_t`;
-            const gId = `${parent}_g`;
-            const cId = `${parent}_c`;
-
-            const aVal = parseFloat(document.getElementById(aId).value) || 0;
-            const tVal = parseFloat(document.getElementById(tId).value) || 0;
-            const gVal = parseFloat(document.getElementById(gId).value) || 0;
-            const cVal = parseFloat(document.getElementById(cId).value) || 0;
-
-            const total = aVal + tVal + gVal + cVal;
-
-            if (total === 0) {
-                // Equal distribution
-                document.getElementById(aId).value = '0.25';
-                document.getElementById(tId).value = '0.25';
-                document.getElementById(gId).value = '0.25';
-                document.getElementById(cId).value = '0.25';
-            } else {
-                // Proportional adjustment
-                document.getElementById(aId).value = (aVal / total).toFixed(3);
-                document.getElementById(tId).value = (tVal / total).toFixed(3);
-                document.getElementById(gId).value = (gVal / total).toFixed(3);
-                document.getElementById(cId).value = (cVal / total).toFixed(3);
-            }
-            
-            saveToLocalStorage();
-            validateNucleotideInputs();
-        }
-
-        // Feature 9: Export Input as JSON
-        function exportInputAsJSON() {
-            const inputData = {
-                Parent_1_A: parseFloat(document.getElementById('parent1_a').value),
-                Parent_1_T: parseFloat(document.getElementById('parent1_t').value),
-                Parent_1_G: parseFloat(document.getElementById('parent1_g').value),
-                Parent_1_C: parseFloat(document.getElementById('parent1_c').value),
-                Parent_2_A: parseFloat(document.getElementById('parent2_a').value),
-                Parent_2_T: parseFloat(document.getElementById('parent2_t').value),
-                Parent_2_G: parseFloat(document.getElementById('parent2_g').value),
-                Parent_2_C: parseFloat(document.getElementById('parent2_c').value),
-                timestamp: new Date().toISOString(),
-                version: "1.2"
-            };
-
-            const dataStr = JSON.stringify(inputData, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'crop_predictor_input.json';
-            link.click();
-            URL.revokeObjectURL(url);
-        }
-
-        // Feature 6: Input Summary Confirmation Modal
-        function showConfirmationModal() {
-            const modal = document.getElementById('confirmation-modal');
-            const summary = document.getElementById('input-summary');
-            
-            let summaryContent = '';
-            
-            if (document.getElementById('upload-section').style.display === 'block') {
-                const file1 = document.getElementById('parent1').files[0];
-                const file2 = document.getElementById('parent2').files[0];
-                summaryContent = `
-                    <p><strong>Input Method:</strong> FASTA Upload</p>
-                    <p><strong>Parent 1 File:</strong> ${file1 ? file1.name : 'Not selected'}</p>
-                    <p><strong>Parent 2 File:</strong> ${file2 ? file2.name : 'Not selected'}</p>
-                `;
-            } else {
-                summaryContent = `
-                    <p><strong>Input Method:</strong> Manual Entry</p>
-                    <div style="display: flex; gap: 20px; justify-content: center;">
-                        <div>
-                            <p><strong>Parent 1:</strong></p>
-                            <p>A: ${document.getElementById('parent1_a').value}</p>
-                            <p>T: ${document.getElementById('parent1_t').value}</p>
-                            <p>G: ${document.getElementById('parent1_g').value}</p>
-                            <p>C: ${document.getElementById('parent1_c').value}</p>
-                        </div>
-                        <div>
-                            <p><strong>Parent 2:</strong></p>
-                            <p>A: ${document.getElementById('parent2_a').value}</p>
-                            <p>T: ${document.getElementById('parent2_t').value}</p>
-                            <p>G: ${document.getElementById('parent2_g').value}</p>
-                            <p>C: ${document.getElementById('parent2_c').value}</p>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            summary.innerHTML = summaryContent;
-            modal.style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('confirmation-modal').style.display = 'none';
-        }
-
-        function confirmPrediction() {
-            closeModal();
-            
-            // Logic Gate: Only proceed if manual section is active.
-            // Explicitly block FASTA prediction to avoid logic bugs until backend is ready.
-            if (document.getElementById('manual-section').style.display === 'block') {
-                predictHybrid();
-            } else {
-                predictFasta();
-            }
-        }
-
-        // Feature 10: App Version Footer
-        function showVersionInfo() {
-            document.getElementById('version-modal').style.display = 'block';
-        }
-
-        function closeVersionModal() {
-            document.getElementById('version-modal').style.display = 'none';
-        }
-
-        function selectInputMethod(method) {
-            // Hide both input sections first
-            document.getElementById('upload-section').style.display = 'none';
-            document.getElementById('manual-section').style.display = 'none';
-            
-            // Hide results and buttons
-            document.querySelector('.results-section').style.display = 'none';
-            document.getElementById('predict-btn').style.display = 'none';
-            document.getElementById('reset-btn').style.display = 'none';
-            
-            // Show selected method
-            if (method === 'upload') {
-                document.getElementById('upload-section').style.display = 'block';
-            } else {
-                document.getElementById('manual-section').style.display = 'block';
-            }
-            
-            // Show prediction buttons
-            document.getElementById('predict-btn').style.display = 'inline-block';
-            document.getElementById('reset-btn').style.display = 'inline-block';
-            
-            // Clear any previous errors
-            document.getElementById('error').textContent = '';
-        }
-
-        function validateNucleotideInputs() {
-            const parents = ['parent1', 'parent2'];
-            let allValid = true;
-            
-            parents.forEach(parent => {
-                const a = parseFloat(document.getElementById(`${parent}_a`).value) || 0;
-                const t = parseFloat(document.getElementById(`${parent}_t`).value) || 0;
-                const g = parseFloat(document.getElementById(`${parent}_g`).value) || 0;
-                const c = parseFloat(document.getElementById(`${parent}_c`).value) || 0;
-                
-                const total = a + t + g + c;
-                
-                if (Math.abs(total - 1) > 0.01) {
-                    const errorElement = document.getElementById('error');
-                    errorElement.textContent = 
-                        `Error: Nucleotide percentages for ${parent} must sum to 1 (current sum: ${total.toFixed(2)})`;
-                    errorElement.style.color = '#e53935';
-                    allValid = false;
-                }
-            });
-            
-            if (allValid) {
-                document.getElementById('error').textContent = '';
-            }
-            
-            return allValid;
-        }
-
-        // Feature 4: Progress Bar for FASTA Processing
-        function updateProgress(step, percentage) {
-            const progressContainer = document.getElementById('progress-container');
-            const progressBar = document.getElementById('progress-bar');
-            
-            progressContainer.style.display = 'block';
-            progressBar.style.width = percentage + '%';
-            progressBar.textContent = step;
-        }
-
-        // Feature 7: FASTA Content Validation
-        function validateFastaContent(sequence) {
-            const cleaned = sequence.replace(/>.*[\r\n]+/g, '').replace(/[\r\n]/g, '').toUpperCase();
-            const validBases = /^[ATGC]*$/;
-            
-            if (!validBases.test(cleaned)) {
-                const invalidChars = cleaned.match(/[^ATGC]/g);
-                throw new Error(`Invalid characters found in FASTA: ${[...new Set(invalidChars)].join(', ')}`);
-            }
-            
-            return cleaned;
-        }
-
-        // ⚠️ NOTE:
-        // FASTA processing here is deprecated.
-        // Real FASTA processing is handled in backend (Python + BioPython).
-        async function processFastaFiles(file1, file2) {
-            try {
-                updateProgress('Reading Files...', 20);
-                const [content1, content2] = await Promise.all([
-                    readFileContent(file1),
-                    readFileContent(file2)
-                ]);
-                
-                updateProgress('Validating...', 40);
-                const seq1 = validateFastaContent(content1);
-                const seq2 = validateFastaContent(content2);
-                
-                fastaSequences.parent1 = seq1;
-                fastaSequences.parent2 = seq2;
-                
-                updateProgress('Calculating Frequencies...', 60);
-                const freq1 = calculateNucleotideFrequency(content1);
-                const freq2 = calculateNucleotideFrequency(content2);
-                
-                return {
-                    Parent_1_A: freq1.A,
-                    Parent_1_T: freq1.T,
-                    Parent_1_G: freq1.G,
-                    Parent_1_C: freq1.C,
-                    Parent_2_A: freq2.A,
-                    Parent_2_T: freq2.T,
-                    Parent_2_G: freq2.G,
-                    Parent_2_C: freq2.C
-                };
-            } catch (error) {
-                console.error('Error processing FASTA files:', error);
-                throw new Error('Failed to process FASTA files: ' + error.message);
-            }
-        }
-
-        function readFileContent(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = event => resolve(event.target.result);
-                reader.onerror = error => reject(error);
-                reader.readAsText(file);
-            });
-        }
-
-        // ⚠️ DEPRECATED
-        function calculateNucleotideFrequency(sequence) {
-            // Remove FASTA headers and line breaks
-            const cleaned = sequence.replace(/>.*[\r\n]+/g, '').replace(/[\r\n]/g, '').toUpperCase();
-            const total = cleaned.length;
-            
-            if (total === 0) {
-                throw new Error('Empty sequence');
-            }
-            
-            // Count each nucleotide
-            const counts = {
-                A: (cleaned.match(/A/g) || []).length,
-                T: (cleaned.match(/T/g) || []).length,
-                G: (cleaned.match(/G/g) || []).length,
-                C: (cleaned.match(/C/g) || []).length
-            };
-            
-            // Calculate frequencies
-            return {
-                A: counts.A / total,
-                T: counts.T / total,
-                G: counts.G / total,
-                C: counts.C / total
-            };
-        }
-
-        // Feature 1: Dynamic Hybrid Crop Naming
-        // ⚠️ DEPRECATED
-        function generateHybridCropName(inputData) {
-            const gcContent = ((inputData.Parent_1_G + inputData.Parent_1_C + 
-                              inputData.Parent_2_G + inputData.Parent_2_C) / 2) * 100;
-            
-            const atContent = ((inputData.Parent_1_A + inputData.Parent_1_T + 
-                              inputData.Parent_2_A + inputData.Parent_2_T) / 2) * 100;
-
-            // Crop selection based on nucleotide composition
-            let cropType = '';
-            if (gcContent > 60) {
-                cropType = 'Rice';
-            } else if (gcContent > 50) {
-                cropType = 'Wheat';
-            } else if (gcContent > 40) {
-                cropType = 'Corn';
-            } else if (atContent > 55) {
-                cropType = 'Soybean';
-            } else {
-                cropType = 'Barley';
-            }
-
-            // Generate hybrid identifier
-            const similarity = calculateSimilarity(inputData);
-            const hybridId = Math.floor(similarity * 1000);
-            
-            return `${cropType}-H${hybridId}`;
-        }
-
-        function calculateSimilarity(inputData) {
-            const diff_a = Math.abs(inputData.Parent_1_A - inputData.Parent_2_A);
-            const diff_t = Math.abs(inputData.Parent_1_T - inputData.Parent_2_T);
-            const diff_g = Math.abs(inputData.Parent_1_G - inputData.Parent_2_G);
-            const diff_c = Math.abs(inputData.Parent_1_C - inputData.Parent_2_C);
-            
-            return 1 - (diff_a + diff_t + diff_g + diff_c) / 4;
-        }
-
-        // Feature 2: Accurate SNP Count for FASTA
-        // ⚠️ DEPRECATED
-        function calculateAccurateSNPs() {
-            if (fastaSequences.parent1 && fastaSequences.parent2) {
-                const seq1 = fastaSequences.parent1;
-                const seq2 = fastaSequences.parent2;
-                const minLength = Math.min(seq1.length, seq2.length);
-                
-                let snpCount = 0;
-                for (let i = 0; i < minLength; i++) {
-                    if (seq1[i] !== seq2[i]) {
-                        snpCount++;
-                    }
-                }
-                
-                return snpCount;
-            }
-            return null;
-        }
-
-        // Feature 3: Downloadable Report
-        function downloadReport() {
-            const results = {
-                hybrid_crop: document.getElementById('result-crop').textContent,
-                gc_content: document.getElementById('result-gc').textContent,
-                snp_count: document.getElementById('result-snp').textContent,
-                yield_potential: document.getElementById('result-yield').textContent,
-                drought_resistance: document.getElementById('result-drought').textContent,
-                disease_resistance: document.getElementById('result-disease').textContent
-            };
-
-            // Create CSV content
-            const csvContent = [
-                'Metric,Value',
-                `Hybrid Crop,${results.hybrid_crop}`,
-                `GC Content (%),${results.gc_content}`,
-                `SNP Count,${results.snp_count}`,
-                `Yield Potential (kg/ha),${results.yield_potential}`,
-                `Drought Resistance,${results.drought_resistance}`,
-                `Disease Resistance,${results.disease_resistance}`,
-                '',
-                `Generated on,${new Date().toLocaleString()}`,
-                `Version,1.2`,
-                `Developers,Kevin & Maha`
-            ].join('\n');
-
-            // Download CSV
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `hybrid_crop_report_${new Date().toISOString().split('T')[0]}.csv`;
-            link.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function displayResults(data) {
-            // Hide everything else
-            document.querySelector('.selection-buttons').style.display = 'none';
-            document.getElementById('upload-section').style.display = 'none';
-            document.getElementById('manual-section').style.display = 'none';
-            document.getElementById('predict-btn').style.display = 'none';
-            document.getElementById('reset-btn').style.display = 'none';
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('progress-container').style.display = 'none';
-            document.querySelector('h1').style.display = 'none';
-            document.querySelector('p').style.display = 'none';
-            
-            // Now fill results
-            document.getElementById('result-crop').textContent = data.hybrid_crop || '-';
-            document.getElementById('result-gc').textContent = data.gc_content !== undefined ? data.gc_content.toFixed(2) : '-';
-            document.getElementById('result-snp').textContent = data.snp_count !== undefined ? data.snp_count.toFixed(0) : '-';
-            document.getElementById('result-yield').textContent = data.yield_potential !== undefined ? data.yield_potential.toFixed(2) : '-';
-            document.getElementById('result-drought').textContent = data.drought_resistance !== undefined ? data.drought_resistance.toFixed(0) + '%' : '-';
-            document.getElementById('result-disease').textContent = data.disease_resistance !== undefined ? data.disease_resistance.toFixed(0) + '%' : '-';
-
-            // Show only results
-            document.querySelector('.results-section').style.display = 'block';
-        }
-
-        async function predictFasta() {
-            const file1 = document.getElementById("parent1").files[0];
-            const file2 = document.getElementById("parent2").files[0];
-
-            if (!file1 || !file2) {
-                document.getElementById("error").textContent =
-                    "Please upload both FASTA files";
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append("parent1", file1);
-            formData.append("parent2", file2);
-
-            document.getElementById("loading").style.display = "block";
-
-            try {
-                const res = await fetch(`${API_BASE}/predict/fasta`, {
-                    method: "POST",
-                    body: formData
-                });
-
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error);
-
-                document.getElementById("loading").style.display = "none";
-                displayResults(data);
-
-            } catch (err) {
-                document.getElementById("error").textContent = err.message;
-                document.getElementById("loading").style.display = "none";
-            }
-        }
-
-        function resetForm() {
-            // Reset file inputs
-            document.getElementById('parent1').value = '';
-            document.getElementById('parent2').value = '';
-            
-            // Reset manual inputs
-            const nucleotideInputs = document.querySelectorAll('input[type="number"]');
-            nucleotideInputs.forEach(input => {
-                input.value = '0.25';
-            });
-            
-            // Reset results
-            const resultElements = document.querySelectorAll('.results-section span[id^="result-"]');
-            resultElements.forEach(element => {
-                element.textContent = '-';
-            });
-            
-            // Hide results section
-            document.querySelector('.results-section').style.display = 'none';
-            
-            // Clear errors
-            document.getElementById('error').textContent = '';
-            
-            // Clear progress
-            document.getElementById('progress-container').style.display = 'none';
-            
-            // Reset global variables
-            currentInputData = {};
-            fastaSequences = { parent1: '', parent2: '' };
-            
-            // Clear localStorage
-            localStorage.removeItem('cropPredictorInputs');
-            
-            // Show initial elements
-            document.querySelector('.selection-buttons').style.display = 'flex';
-            document.querySelector('h1').style.display = 'block';
-            document.querySelector('p').style.display = 'block';
-            
-            // Hide input sections and buttons
-            document.getElementById('upload-section').style.display = 'none';
-            document.getElementById('manual-section').style.display = 'none';
-            document.getElementById('predict-btn').style.display = 'none';
-            document.getElementById('reset-btn').style.display = 'none';
-        }
-
-        // Close modals when clicking outside
-        window.onclick = function(event) {
-            const confirmModal = document.getElementById('confirmation-modal');
-            const versionModal = document.getElementById('version-modal');
-            
-            if (event.target === confirmModal) {
-                closeModal();
-            }
-            if (event.target === versionModal) {
-                closeVersionModal();
-            }
-        }
-
-        const leafCount = 25;
-
-    for (let i = 0; i < leafCount; i++) {
-        const leaf = document.createElement('div');
-        leaf.className = 'floating-leaf';
-
-        // Uniform horizontal distribution with slight randomness
-        const left = (i * (100 / leafCount)) + (Math.random() * 3 - 1.5); // % left
-        const top = Math.floor(Math.random() * 90); // % from top of screen
-        const delay = (Math.random() * 8).toFixed(2); // animation delay
-        const scale = (0.6 + Math.random() * 0.5).toFixed(2); // scale size
-
-        leaf.style.left = `${left}%`;
-        leaf.style.top = `${top}vh`; // random position in the vertical space
-        leaf.style.animationDelay = `${delay}s`;
-        leaf.style.transform = `scale(${scale}) rotate(${Math.random() * 360}deg)`;
-
-        document.body.appendChild(leaf);
+        el.style.transition = 'opacity .35s, transform .35s';
+      }, 3200);
     }
-    
 
-    </script>
+    // Scroll-triggered reveal
+    function initScrollReveal() {
+      const els = document.querySelectorAll('[data-reveal]');
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); }
+        });
+      }, { threshold: 0.12 });
+      els.forEach(el => obs.observe(el));
+    }
+  </script>
 </body>
 </html>

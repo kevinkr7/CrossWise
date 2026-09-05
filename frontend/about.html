@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — CrossWise</title>
+  <meta name="description"
+    content="Learn about CrossWise — an AI-driven tool for predicting maize hybrid characteristics from DNA sequence analysis, built for the Maize Hybridisation study.">
+  <link rel="icon" type="image/png" href="assets/icons/leaf.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- Navbar injected by nav.js -->
+
+  <div class="nav-spacer"></div>
+
+  <!-- ═══════ HERO ═══════════════════════════════════════════════════════════ -->
+  <section class="about-hero container">
+    <span class="tag" data-reveal>The Science Behind It</span>
+    <h1 class="about-hero__title" data-reveal data-reveal-delay="1">
+      From maize research<br>to predictive tooling
+    </h1>
+    <p class="about-hero__lead" data-reveal data-reveal-delay="2">
+      CrossWise emerged from a study of maize — a staple plant in global food systems. We built a tool that makes
+      nucleotide-level hybrid prediction fast and accessible.
+    </p>
+  </section>
+
+  <!-- ═══════ ABOUT BODY ══════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="about-columns">
+
+        <!-- Left: Long-form copy -->
+        <div class="about-body" data-reveal>
+
+          <h2>Why hybrid prediction matters</h2>
+          <p>
+            Hybrid breeding is one of the most powerful tools in modern agriculture. By crossing two genetically
+            distinct parent plants, breeders can produce offspring — hybrids — that outperform either parent in traits
+            like yield, drought tolerance, and disease resistance. This phenomenon is called <em>heterosis</em>, or
+            hybrid vigour.
+          </p>
+          <p>
+            While decades of genetic data make heterosis prediction for maize tractable in theory, modern breeding
+            programs often still rely on expensive and time-consuming field trials. We built a tool specifically
+            tailored to maize to make these predictions faster, cheaper, and more accessible.
+          </p>
+
+          <h2 style="margin-top: var(--s10);">Our approach</h2>
+          <p>
+            CrossWise uses a multi-trait SNP genotyping approach: instead of requiring full genomic data, users provide
+            SNP markers for each parent. The model generates thousands of virtual parent pairings and predicts 5 key
+            traits across various environments.
+          </p>
+          <p>
+            These eight values (four per parent) feed into a trained ML model that predicts the most likely hybrid
+            cultivar class, GC content of the offspring, estimated SNP count, yield potential in kg/ha, and resistance
+            percentages for drought and disease.
+          </p>
+          <p>
+            The model was trained on a curated dataset of known parent-offspring pairings from published maize
+            hybridisation studies. The predictions are probabilistic estimates — intended to assist early-stage
+            screening, not replace field trials.
+          </p>
+
+          <h2 style="margin-top: var(--s10);">What's next</h2>
+          <p>
+            We're expanding the training dataset, adding multi-parent cross support, and building export pipelines
+            directly compatible with field trial management software. If you're a researcher working with maize, we'd
+            love to hear from you.
+          </p>
+
+        </div>
+
+        <!-- Right: Sidebar -->
+        <div class="about-sidebar" data-reveal data-reveal-delay="2">
+
+          <div class="about-tech-card">
+            <div class="about-tech-card__title">Technology Stack</div>
+
+            <div class="tech-item">
+              <span class="tech-item-dot"></span>
+              Python + Flask (REST API backend)
+            </div>
+            <div class="tech-item">
+              <span class="tech-item-dot"></span>
+              scikit-learn (ML model)
+            </div>
+            <div class="tech-item">
+              <span class="tech-item-dot"></span>
+              Pandas (Dataset handling)
+            </div>
+            <div class="tech-item">
+              <span class="tech-item-dot"></span>
+              Vanilla HTML / CSS / JS (frontend)
+            </div>
+            <div class="tech-item">
+              <span class="tech-item-dot"></span>
+              localStorage (client-side auth & persistence)
+            </div>
+          </div>
+
+          <div class="about-tech-card">
+            <div class="about-tech-card__title">Input Features</div>
+            <div class="tech-item"><span class="tech-item-dot"></span>Parent 1 — A fraction</div>
+            <div class="tech-item"><span class="tech-item-dot"></span>Parent 1 — T fraction</div>
+            <div class="tech-item"><span class="tech-item-dot"></span>Parent 1 — G fraction</div>
+            <div class="tech-item"><span class="tech-item-dot"></span>Parent 1 — C fraction</div>
+            <div class="tech-item"><span class="tech-item-dot"></span>Parent 2 — A fraction</div>
+            <div class="tech-item"><span class="tech-item-dot"></span>Parent 2 — T fraction</div>
+            <div class="tech-item"><span class="tech-item-dot"></span>Parent 2 — G fraction</div>
+            <div class="tech-item"><span class="tech-item-dot"></span>Parent 2 — C fraction</div>
+          </div>
+
+          <div class="about-tech-card">
+            <div class="about-tech-card__title">Predicted Outputs</div>
+            <div class="tech-item"><span class="tech-item-dot"></span>Hybrid cultivar name</div>
+            <div class="tech-item"><span class="tech-item-dot"></span>GC content (%)</div>
+            <div class="tech-item"><span class="tech-item-dot"></span>SNP count (estimated)</div>
+            <div class="tech-item"><span class="tech-item-dot"></span>Yield potential (kg/ha)</div>
+            <div class="tech-item"><span class="tech-item-dot"></span>Drought resistance (%)</div>
+            <div class="tech-item"><span class="tech-item-dot"></span>Disease resistance (%)</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ TEAM ════════════════════════════════════════════════════════════ -->
+  <section class="team-section">
+    <div class="container team-section__container">
+
+      <div class="team-header" data-reveal>
+        <span class="tag">The Team</span>
+        <h2 class="team-header__title">Built by two researchers</h2>
+        <p class="team-header__sub">A collaborative study in agricultural bioinformatics and machine learning.</p>
+      </div>
+
+      <div class="team-profiles" data-reveal data-reveal-delay="1">
+
+        <div class="team-profile">
+          <div class="team-profile__media">
+            <img src="assets/developers/kevin.png" alt="Kevin" class="team-profile__img" loading="lazy">
+          </div>
+          <div class="team-profile__info">
+            <h3 class="team-profile__name">Kevin</h3>
+            <div class="team-profile__role">ML &amp; Backend Engineering</div>
+            <p class="team-profile__bio">
+              Built the prediction pipeline, Flask API, and the machine learning model training workflow. Responsible
+              for the overall system architecture and frontend engineering.
+            </p>
+          </div>
+        </div>
+
+        <div class="team-profile">
+          <div class="team-profile__media">
+            <img src="assets/developers/maha.png" alt="Maha" class="team-profile__img" loading="lazy">
+          </div>
+          <div class="team-profile__info">
+            <h3 class="team-profile__name">Mahasmriti</h3>
+            <div class="team-profile__role">Research &amp; Dataset Curation</div>
+            <p class="team-profile__bio">
+              Led the literature review on maize hybridisation, curated the training dataset from published studies, and
+              designed the feature selection methodology.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ CTA ══════════════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-banner" data-reveal>
+        <h2 class="cta-banner__title">Try the predictor</h2>
+        <p class="cta-banner__sub">Create an account and run your first hybrid prediction in under a minute.</p>
+        <div class="cta-banner__actions">
+          <a href="register.html" class="btn btn--on-dark btn--lg">Get started free</a>
+          <a href="index.html" class="btn btn--outline-on-dark btn--lg">Back to home</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ FOOTER ══════════════════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand-name">CrossWise</div>
+          <p class="footer__brand-desc">An AI-driven tool for predicting maize hybrid characteristics from DNA sequence
+            analysis.</p>
+        </div>
+        <div>
+          <div class="footer__col-title">Navigate</div>
+          <nav class="footer__links">
+            <a href="index.html" class="footer__link">Home</a>
+            <a href="about.html" class="footer__link">About</a>
+            <a href="upload.html" class="footer__link">Virtual Breeding</a>
+          </nav>
+        </div>
+        <div>
+          <div class="footer__col-title">Account</div>
+          <nav class="footer__links">
+            <a href="login.html" class="footer__link">Sign in</a>
+            <a href="register.html" class="footer__link">Register</a>
+          </nav>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>© 2025 Kevin &amp; Maha — CrossWise v1.2</span>
+        <span>Built for the Maize Hybridisation Study</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/auth.js?v=2"></script>
+  <script src="js/nav.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initNav();
+      // Scroll reveal
+      const els = document.querySelectorAll('[data-reveal]');
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); } });
+      }, { threshold: 0.1 });
+      els.forEach(el => obs.observe(el));
+    });
+  </script>
+</body>
+
+</html>

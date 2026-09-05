@@ -1,0 +1,7 @@
+Location,State,Season,Soil_Type,Irrigation,Rainfall_mm,Temp_C,Humidity_pct,Base_Yield,Drought_Stress_Index,Disease_Pressure_Index
+Coimbatore,Tamil Nadu,Kharif,Red Loamy,Rainfed,650,29.5,68,3.6,0.333,0.767
+Mandya,Karnataka,Kharif,Red Loamy,Irrigated (Cauvery command),780,27.0,72,6.8,0.0,0.9
+Davangere,Karnataka,Rabi,Black Cotton,Irrigated,430,25.5,58,7.4,0.472,0.433
+Anantapur,Andhra Pradesh,Kharif,Red Sandy,Rainfed,390,31.0,52,2.8,0.911,0.233
+Warangal,Telangana,Rabi,Black Cotton,Irrigated,410,26.5,60,7.1,0.517,0.5
+Bengaluru Rural,Karnataka,Kharif,Red Sandy Loam,Rainfed,720,26.0,70,3.9,0.178,0.833

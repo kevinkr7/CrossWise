@@ -1,11 +1,108 @@
-# Python cache
-__pycache__/
-*.pyc
+# ═══════════════════════════════════════════════════════════════════════════════
+# .gitignore — CrossWise Virtual Breeding Platform
+# ═══════════════════════════════════════════════════════════════════════════════
 
-# Virtual environment
-venv/
-.env
-
-# OS junk
+# ── OS Generated Files ────────────────────────────────────────────────────────
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
+
+# ── Python & Bytecode ─────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ── Virtual Environments & Local Configuration ────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+backend/venv/
+env.bak/
+venv.bak/
+.env
+backend/.env
+*.env
+*.env.local
+
+# ── IDE & Editor Settings ─────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Jupyter Notebooks ─────────────────────────────────────────────────────────
+.ipynb_checkpoints
+
+# ── Logs & Debug Dumps ────────────────────────────────────────────────────────
+logs/
+*.log
+
+# ── Machine Learning Models & Heavy Binaries (>100MB blocked by GitHub) ──────
+*.h5
+*.pkl
+*.joblib
+*.pt
+*.pth
+backend/models/*.pkl
+backend/models/*.joblib
+
+# Explicitly track code and reports in models directory
+!backend/models/*.py
+!backend/models/reports/**
+
+# ── Temporary User Uploads ────────────────────────────────────────────────────
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# ── Tabular & Genomic Data (with explicit project exemptions) ─────────────────
+*.csv
+*.tsv
+*.fasta
+*.fna
+
+# Allow Test sample datasets (so users cloning the repo can test uploads)
+!Test/
+!Test/**
+!Test/*.csv
+!Test/*.txt
+
+# Allow bundled Maize training datasets (required for startup auto-training)
+!Maize_datasets/
+!Maize_datasets/**
+!Maize_datasets/*.csv
+!Maize_datasets/*.md
+!Maize_datasets/*.py
+
+# ── Large Legacy Research Datasets & Fasta ────────────────────────────────────
+fasta_files/
+ml_pipeline/datasets/
+
+# ── Obsolete Frontend Legacy Files ────────────────────────────────────────────
+frontend/previous/
+frontend/*_legacy.*

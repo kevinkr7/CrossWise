@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}About — CrossWise Methodology & Team{% endblock %}
+
+{% block content %}
+<main class="about-page">
+  <div class="container">
+
+    <div class="page-header" data-reveal>
+      <span class="tag">About the Project</span>
+      <h1 class="page-header__title">Pioneering Genomic-Driven<br>Maize Hybrid Breeding</h1>
+      <p class="page-header__sub">Combining SNP genotyping, multi-output machine learning, and agronomic environmental features to accelerate hybrid breeding pipelines.</p>
+    </div>
+
+    <div class="about-columns">
+      <div class="about-main" data-reveal data-reveal-delay="1">
+        <section class="about-section">
+          <h2>Project Overview</h2>
+          <p>
+            CrossWise is an agricultural AI platform designed to help maize breeders predict the phenotypic performance
+            of hybrid cultivars prior to expensive multi-environment field trials. By analyzing 300+ SNP markers across
+            inbred parent lines alongside environmental parameters (rainfall, temperature, humidity), our model simulates
+            all pairwise crosses and predicts Yield Potential, Drought Tolerance, Disease Resistance, Grain Quality, and Maturity Period.
+          </p>
+        </section>
+
+        <section class="about-section">
+          <h2>Machine Learning Model</h2>
+          <p>
+            The core engine utilizes an ensemble of high-capacity <strong>Random Forest Regressors</strong> and calibrated
+            multi-class classifiers trained on validated agricultural genomic datasets. CrossWise pre-computes genomic
+            compatibility, applies variance filtering and biological feature engineering (heterozygosity, minor allele burden),
+            and provides global and local SHAP explainability.
+          </p>
+        </section>
+
+        <!-- ═══════ THE TEAM SECTION ════════════════════════════════════════════ -->
+        <section class="about-section team-section-modern" style="margin-top:var(--s8)">
+          <div class="team-header">
+            <span class="team-header__tag">THE TEAM</span>
+            <h2 class="team-header__title">Built by two researchers</h2>
+            <p class="team-header__sub">A collaborative study in agricultural bioinformatics and machine learning.</p>
+          </div>
+
+          <div class="team-profiles" data-reveal data-reveal-delay="1">
+
+            <div class="team-profile">
+              <div class="team-profile__media">
+                <img src="{{ url_for('static', filename='assets/developers/kevin.png') }}" alt="Kevin" class="team-profile__img" loading="lazy">
+              </div>
+              <div class="team-profile__info">
+                <h3 class="team-profile__name">Kevin</h3>
+                <div class="team-profile__role">ML &amp; Backend Engineering</div>
+                <p class="team-profile__bio">
+                  Built the prediction pipeline, Flask API, and the machine learning model training workflow. Responsible
+                  for the overall system architecture and frontend engineering.
+                </p>
+              </div>
+            </div>
+
+            <div class="team-profile">
+              <div class="team-profile__media">
+                <img src="{{ url_for('static', filename='assets/developers/maha.png') }}" alt="Maha" class="team-profile__img" loading="lazy">
+              </div>
+              <div class="team-profile__info">
+                <h3 class="team-profile__name">Mahasmriti</h3>
+                <div class="team-profile__role">Research &amp; Dataset Curation</div>
+                <p class="team-profile__bio">
+                  Led the literature review on maize hybridisation, curated the training dataset from published studies, and
+                  designed the feature selection methodology.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+      <div class="about-sidebar" data-reveal data-reveal-delay="2">
+        <div class="sidebar-card">
+          <h3>Framework Info</h3>
+          <div class="sidebar-row"><span>Version</span><strong>2.0 Modular</strong></div>
+          <div class="sidebar-row"><span>Architecture</span><strong>Flask + RF + SHAP + MongoDB</strong></div>
+          <div class="sidebar-row"><span>Genomic Input</span><strong>300-SNP Panel</strong></div>
+          <div class="sidebar-row"><span>Status</span><strong>Active Production</strong></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+{% endblock %}

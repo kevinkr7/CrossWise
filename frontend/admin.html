@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Model Management — CrossWise</title>
+  <meta name="description" content="Upload your SNP genotype CSV, environmental data, and optional phenotypic records to train the AI parent selection model.">
+  <link rel="icon" type="image/png" href="assets/icons/leaf.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="nav-spacer"></div>
+
+  <main class="main-content" style="max-width:1060px;margin:0 auto">
+
+    <!-- Page Header -->
+    <div class="page-header" data-reveal>
+      <div class="page-header__eyebrow"><span class="tag">Step 1 of 3</span></div>
+      <h1 class="page-header__title">Model Management</h1>
+      <p class="page-header__sub">Upload training datasets, configure Random Forest estimators, and retrain the AI model. This functionality is restricted to administrators and researchers.</p>
+    </div>
+
+    <!-- ── Bundled dataset info banner ─────────────────────────────────── -->
+    <div class="card mb-4" data-reveal>
+      <div class="alert alert--info">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div>
+          <strong>Bundled Dataset Available</strong> — The synthetic South-Indian maize dataset
+          (<code style="font-family:var(--font-mono);color:var(--brand);font-size:var(--t-xs)">synthetic_maize_dataset.csv</code>)
+          is pre-loaded. You may <strong>skip upload</strong> and go directly to
+          <a href="recommend.html">recommendations</a> — the model auto-trains on startup.
+          Upload your own CSVs below to override it.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Existing dataset status ──────────────────────────────────────── -->
+    <div id="existing-dataset-info" data-reveal></div>
+
+    <!-- ── Three-zone upload grid ───────────────────────────────────────── -->
+    <div class="upload-grid-3 mt-4" data-reveal data-reveal-delay="1">
+
+      <!-- Zone 1: SNP Genotype CSV (Required) -->
+      <div class="upload-card upload-card--required" id="zone-snp-card">
+        <div class="upload-card__badge badge--required">Required</div>
+        <div class="upload-card__title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M21 3H3v18h18V3z"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+          SNP Genotype CSV
+        </div>
+        <div class="upload-card__desc">One row per maize inbred line. Columns: <code>Line</code> + <code>SNP_001…SNP_300</code></div>
+
+        <div class="upload-zone upload-zone--compact" id="zone-snp" role="button" tabindex="0" aria-label="Upload SNP Genotype CSV">
+          <svg class="upload-zone__icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div class="upload-zone__title">Drop SNP CSV or <span class="upload-zone__link">browse</span></div>
+          <div class="upload-zone__hint">.csv — up to 100 MB</div>
+          <input type="file" id="snp-file-input" accept=".csv" aria-label="SNP Genotype CSV">
+        </div>
+        <div id="snp-file-status" class="upload-file-status hidden"></div>
+
+        <div class="schema-hint mt-3">
+          <div class="schema-hint__title">Expected columns</div>
+          <div class="schema-hint__row"><code>Line</code> <span>Unique inbred line ID</span></div>
+          <div class="schema-hint__row"><code>SNP_001 … SNP_300</code> <span>Allele pairs (AA / AG / GG / NN)</span></div>
+        </div>
+      </div>
+
+      <!-- Zone 2: Environmental CSV (Required) -->
+      <div class="upload-card upload-card--required" id="zone-env-card">
+        <div class="upload-card__badge badge--required">Required</div>
+        <div class="upload-card__title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M12 2a10 10 0 0 1 10 10c0 4.42-3.07 8.13-7.22 9.64A10.03 10.03 0 0 1 2 12 10 10 0 0 1 12 2z"/><path d="M12 6v6l4 2"/></svg>
+          Environmental CSV
+        </div>
+        <div class="upload-card__desc">Temperature, Rainfall, Humidity, Soil pH, Soil Moisture per environment.</div>
+
+        <div class="upload-zone upload-zone--compact" id="zone-env" role="button" tabindex="0" aria-label="Upload Environmental CSV">
+          <svg class="upload-zone__icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div class="upload-zone__title">Drop Env CSV or <span class="upload-zone__link">browse</span></div>
+          <div class="upload-zone__hint">.csv — environment conditions</div>
+          <input type="file" id="env-file-input" accept=".csv" aria-label="Environmental CSV">
+        </div>
+        <div id="env-file-status" class="upload-file-status hidden"></div>
+
+        <div class="schema-hint mt-3">
+          <div class="schema-hint__title">Expected columns</div>
+          <div class="schema-hint__row"><code>Temperature</code> <span>Mean season temp (°C)</span></div>
+          <div class="schema-hint__row"><code>Rainfall</code> <span>Seasonal rainfall (mm)</span></div>
+          <div class="schema-hint__row"><code>Humidity</code> <span>Relative humidity (%)</span></div>
+          <div class="schema-hint__row"><code>Soil_pH</code> <span>Soil pH value</span></div>
+          <div class="schema-hint__row"><code>Soil_Moisture</code> <span>Volumetric moisture (%)</span></div>
+        </div>
+      </div>
+
+      <!-- Zone 3: Phenotypic CSV (Optional) -->
+      <div class="upload-card upload-card--optional" id="zone-pheno-card">
+        <div class="upload-card__badge badge--optional">Optional</div>
+        <div class="upload-card__title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Historical Phenotypic CSV
+        </div>
+        <div class="upload-card__desc">If available, include historical yield, disease, and drought observations to improve prediction accuracy.</div>
+
+        <div class="upload-zone upload-zone--compact upload-zone--optional" id="zone-pheno" role="button" tabindex="0" aria-label="Upload Phenotypic CSV">
+          <svg class="upload-zone__icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div class="upload-zone__title">Drop Phenotypic CSV or <span class="upload-zone__link">browse</span></div>
+          <div class="upload-zone__hint">.csv — optional, improves accuracy</div>
+          <input type="file" id="pheno-file-input" accept=".csv" aria-label="Phenotypic CSV">
+        </div>
+        <div id="pheno-file-status" class="upload-file-status hidden"></div>
+
+        <div class="schema-hint mt-3">
+          <div class="schema-hint__title">Expected columns</div>
+          <div class="schema-hint__row"><code>Parent</code> <span>Line ID (matches SNP CSV)</span></div>
+          <div class="schema-hint__row"><code>Yield</code> <span>Grain yield (t/ha)</span></div>
+          <div class="schema-hint__row"><code>Disease</code> <span>Resistant / Moderate / Susceptible</span></div>
+          <div class="schema-hint__row"><code>Drought</code> <span>High / Medium / Low</span></div>
+        </div>
+      </div>
+
+    </div><!-- /upload-grid-3 -->
+
+    <!-- ── Upload action ─────────────────────────────────────────────────── -->
+    <div class="card mt-4" data-reveal>
+      <div id="upload-global-status"></div>
+      <div style="display:flex;gap:var(--s3);flex-wrap:wrap;align-items:center;margin-top:var(--s2)">
+        <button class="btn btn--primary btn--lg" id="upload-submit-btn" type="button" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload Datasets
+        </button>
+        <span style="color:var(--text-muted);font-size:var(--t-xs)" id="upload-hint-text">Upload SNP + Environmental CSVs to enable</span>
+      </div>
+    </div>
+
+    <!-- ── Dataset Validation Report ────────────────────────────────────── -->
+    <div id="validation-report" class="hidden mt-4" data-reveal></div>
+
+    <!-- ── Train Section ─────────────────────────────────────────────────── -->
+    <div id="train-section" class="hidden mt-4" data-reveal>
+      <div class="card card--glow">
+        <div class="card__header">
+          <div>
+            <div class="card__title">Train AI Model</div>
+            <div class="card__subtitle">Random Forest with multi-output trait prediction — 200 estimators, OOB validation, 70/15/15 split</div>
+          </div>
+          <span class="tag" id="train-status-tag">Ready</span>
+        </div>
+
+        <!-- Pipeline stepper -->
+        <div class="stepper" id="pipeline-stepper">
+          <div class="step-item" data-step="0"><div class="step-dot">1</div><div class="step-label">Load Data</div></div>
+          <div class="step-item" data-step="1"><div class="step-dot">2</div><div class="step-label">SNP Encode</div></div>
+          <div class="step-item" data-step="2"><div class="step-dot">3</div><div class="step-label">Impute NN</div></div>
+          <div class="step-item" data-step="3"><div class="step-dot">4</div><div class="step-label">Split 70/15/15</div></div>
+          <div class="step-item" data-step="4"><div class="step-dot">5</div><div class="step-label">Train RF</div></div>
+          <div class="step-item" data-step="5"><div class="step-dot">6</div><div class="step-label">Evaluate</div></div>
+          <div class="step-item" data-step="6"><div class="step-dot">7</div><div class="step-label">Save</div></div>
+        </div>
+
+        <div style="display:flex;gap:var(--s3);margin-top:var(--s5);flex-wrap:wrap">
+          <button class="btn btn--primary btn--lg" id="train-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px">
+              <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
+              <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
+            </svg>
+            Train Model
+          </button>
+          <a href="recommend.html" class="btn btn--ghost btn--lg">
+            Skip to Recommendations →
+          </a>
+        </div>
+
+        <div id="train-result" class="mt-4"></div>
+      </div>
+    </div>
+
+    <!-- ── Model metrics (shown if already trained) ──────────────────────── -->
+    <div id="model-metrics-section" class="hidden mt-4" data-reveal>
+      <div class="card">
+        <div class="card__header">
+          <div class="card__title">Current Model Performance</div>
+          <span class="tag tag--success" id="model-status-tag">Trained</span>
+        </div>
+        <div class="metric-cards mt-3" id="model-metric-cards"></div>
+        <div style="margin-top:var(--s4);display:flex;gap:var(--s3)">
+          <a href="recommend.html" class="btn btn--primary">Generate Recommendations →</a>
+          <a href="explainability.html" class="btn btn--ghost">View SHAP →</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/auth.js?v=2"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/api.js?v=2"></script>
+  <script src="js/admin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      requireAdmin();
+      if (typeof initNav === 'function') initNav();
+    });
+  </script>
+</body>
+</html>

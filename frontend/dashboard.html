@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breeding Intelligence Dashboard — CrossWise</title>
+  <meta name="description"
+    content="Personalized virtual breeding dashboard showing user-specific recommendation runs, hybrid predictions, trait analytics, and simulation history.">
+  <link rel="icon" type="image/png" href="assets/icons/leaf.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="nav-spacer"></div>
+
+  <main class="main-content" style="max-width:1200px;margin:0 auto">
+
+    <!-- User Profile & Personalized Header Bar -->
+    <div class="user-profile-bar" data-reveal>
+      <div class="user-profile-info">
+        <div class="user-avatar" id="user-avatar-initials">U</div>
+        <div>
+          <h1 class="user-greeting" id="user-greeting-text">Welcome back, Researcher 👋</h1>
+          <div class="user-meta">
+            <span class="user-role-badge" id="user-role-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              Breeding Specialist
+            </span>
+            <span>·</span>
+            <span id="user-email-display">user@crosswise.ai</span>
+            <span>·</span>
+            <span class="tag tag--success" style="font-size:11px;padding:2px 8px">● Active Session</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:var(--s2);align-items:center;flex-wrap:wrap">
+        <a href="upload.html" class="btn btn--primary btn--sm" style="display:inline-flex;align-items:center;gap:var(--s2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          New Breeding Run
+        </a>
+      </div>
+    </div>
+
+    <!-- User-Specific Virtual Breeding KPI Cards -->
+    <div class="dashboard-stat-grid" data-reveal data-reveal-delay="1">
+      <div class="metric-card metric-card--yield">
+        <div class="metric-card__label">Simulations Run</div>
+        <div class="metric-card__value" id="stat-user-runs">—</div>
+        <div class="metric-card__sub">Saved in your profile</div>
+      </div>
+      <div class="metric-card metric-card--confidence">
+        <div class="metric-card__label">Best Yield Found</div>
+        <div class="metric-card__value" id="stat-user-best-yield">—</div>
+        <div class="metric-card__sub">Peak predicted t/ha</div>
+      </div>
+      <div class="metric-card metric-card--drought">
+        <div class="metric-card__label">Top Composite Score</div>
+        <div class="metric-card__value" id="stat-user-best-score">—</div>
+        <div class="metric-card__sub">Multi-trait optimization</div>
+      </div>
+      <div class="metric-card metric-card--disease">
+        <div class="metric-card__label">Candidate Pairs Screened</div>
+        <div class="metric-card__value" id="stat-user-pairs">—</div>
+        <div class="metric-card__sub">Cumulative crosses evaluated</div>
+      </div>
+    </div>
+
+    <!-- Active Run Indicator Banner (when viewing a specific past run) -->
+    <div id="run-active-banner" class="run-banner hidden" data-reveal>
+      <div>
+        <span>Currently viewing: <strong id="run-banner-date">—</strong> (<span id="run-banner-pairs">—</span> candidate pairs evaluated)</span>
+      </div>
+      <button class="btn btn--ghost btn--sm" id="btn-return-latest" style="font-size:var(--t-xs)">
+        Return to Latest Run ↺
+      </button>
+    </div>
+
+    <!-- Active Recommendation Showcase Hero Card -->
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:var(--s4);margin-bottom:var(--s6)" data-reveal data-reveal-delay="2">
+      <div id="top-rec-container">
+        <div class="card" style="height:220px;display:flex;align-items:center;justify-content:center">
+          <div class="spinner" style="width:32px;height:32px;border-width:3px"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:var(--s3)">
+        <div class="metric-card metric-card--yield">
+          <div class="metric-card__label">Active Predicted Yield</div>
+          <div class="metric-card__value" id="metric-yield">—</div>
+          <div class="metric-card__sub">Top hybrid grain yield</div>
+        </div>
+        <div class="metric-card metric-card--confidence">
+          <div class="metric-card__label">Composite Score</div>
+          <div class="metric-card__value" id="metric-score">—</div>
+          <div class="metric-card__sub">Rank #1 recommendation</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prediction Trait Cards Row -->
+    <div class="metric-cards mb-4" data-reveal data-reveal-delay="3">
+      <div class="metric-card metric-card--yield">
+        <div class="metric-card__label">Grain Yield</div>
+        <div class="metric-card__value" id="dc-yield">—</div>
+        <div class="metric-card__sub">Predicted grain output</div>
+      </div>
+      <div class="metric-card metric-card--drought">
+        <div class="metric-card__label">Drought Tolerance</div>
+        <div class="metric-card__value" id="dc-drought" style="font-size:var(--t-2xl)">—</div>
+        <div class="metric-card__sub">Water-deficit response</div>
+      </div>
+      <div class="metric-card metric-card--disease">
+        <div class="metric-card__label">Disease Resistance</div>
+        <div class="metric-card__value" id="dc-disease" style="font-size:var(--t-2xl)">—</div>
+        <div class="metric-card__sub">Pathogen &amp; blight resistance</div>
+      </div>
+      <div class="metric-card metric-card--confidence">
+        <div class="metric-card__label">Model Confidence</div>
+        <div class="metric-card__value" id="dc-confidence">—</div>
+        <div class="metric-card__sub">Certainty probability</div>
+      </div>
+    </div>
+
+    <!-- Recommendations Table -->
+    <div class="card mb-4" data-reveal data-reveal-delay="4">
+      <div class="card__header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--s3)">
+        <div>
+          <div class="card__title" id="rec-table-title">Top Recommended Combinations</div>
+          <div class="card__subtitle" id="rec-table-subtitle">Ranked by Yield (40%) · Drought (30%) · Disease (20%) · Compatibility (10%)</div>
+        </div>
+        <div style="display:flex;gap:var(--s2);align-items:center">
+          <a href="recommend.html" class="btn btn--outline btn--sm" id="btn-view-full-rec">
+            View Full Screen →
+          </a>
+        </div>
+      </div>
+
+      <div class="rec-table-wrapper">
+        <table class="rec-table" id="rec-table" aria-label="Top parent recommendations">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Hybrid Combination</th>
+              <th>Yield (t/ha)</th>
+              <th>Drought</th>
+              <th>Disease</th>
+              <th>Quality</th>
+              <th>Maturity</th>
+              <th>Score</th>
+              <th>Confidence</th>
+            </tr>
+          </thead>
+          <tbody id="rec-table-body">
+            <tr>
+              <td colspan="9" style="text-align:center;color:var(--text-muted);padding:var(--s8)">
+                Loading your recommendations …
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Footer action inside card -->
+      <div style="padding:var(--s4);text-align:center;border-top:1px solid var(--border);display:flex;justify-content:center;gap:var(--s3);flex-wrap:wrap">
+        <a href="upload.html" class="btn btn--primary btn--lg" style="display:inline-flex;align-items:center;gap:var(--s2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Run New Virtual Crosses
+        </a>
+      </div>
+    </div>
+
+    <!-- Recommendation History Section -->
+    <div class="card mb-4" data-reveal>
+      <div class="card__header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--s3)">
+        <div>
+          <div class="card__title">Your Simulation History</div>
+          <div class="card__subtitle">Previous virtual breeding runs for your account in MongoDB. Click any run to view its results.</div>
+        </div>
+        <div style="display:flex;gap:var(--s2);flex-wrap:wrap">
+          <button class="btn btn--ghost btn--sm" id="clear-history-btn" type="button">Clear History</button>
+          <button class="btn btn--secondary btn--sm" id="export-history-btn" type="button" style="display:inline-flex;align-items:center;gap:var(--s2)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export JSON
+          </button>
+        </div>
+      </div>
+
+      <div id="history-container" class="mt-4">
+        <div class="alert alert--info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          Loading your history from server …
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Model Status Pill Card -->
+    <div class="card" data-reveal style="background:var(--parchment);border-style:dashed">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--s3)">
+        <div style="display:flex;align-items:center;gap:var(--s3)">
+          <div class="tag tag--success" id="model-status-tag">● AI Predictor Active</div>
+          <span style="font-size:var(--t-sm);color:var(--sage-900);font-weight:600">Random Forest Multi-Output Engine</span>
+        </div>
+        <div style="font-size:var(--t-xs);color:var(--muted)">
+          Trained on <strong>6,000 samples</strong> · <strong>300 SNP Loci</strong> · Accuracy R² = <strong>0.787</strong>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/auth.js?v=3"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/api.js?v=2"></script>
+  <script src="js/dashboard.js?v=3"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      requireAuth('login.html');
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explainability (SHAP) — CrossWise Virtual Breeding Framework</title>
+  <meta name="description" content="SHAP-based explainability: global feature importance, beeswarm summary plots, and per-pair local explanations for maize hybrid parent recommendations.">
+  <link rel="icon" type="image/png" href="assets/icons/leaf.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="nav-spacer"></div>
+
+  <main class="main-content" style="max-width:1100px;margin:0 auto">
+
+    <div class="page-header" data-reveal>
+      <div class="page-header__eyebrow"><span class="tag">Step 3 of 3</span></div>
+      <h1 class="page-header__title">Explainable AI (SHAP)</h1>
+      <p class="page-header__sub">TreeExplainer SHAP values reveal which SNP markers and environmental features drive each breeding recommendation.</p>
+    </div>
+
+    <!-- Loading indicator -->
+    <div id="shap-loading" class="card mb-4 text-center" style="padding:var(--s12)">
+      <div class="spinner spinner--lg" style="margin:0 auto var(--s4)"></div>
+      <div class="loading-text">Computing SHAP values… This may take 15–60 seconds.</div>
+      <p style="font-size:var(--t-xs);color:var(--text-muted);margin-top:var(--s2)">
+        SHAP TreeExplainer is running on the test set (up to 200 samples).
+      </p>
+    </div>
+
+    <div id="shap-error" class="hidden mb-4"></div>
+
+    <!-- Global Feature Importance -->
+    <div class="card mb-4" data-reveal>
+      <div class="card__header">
+        <div>
+          <div class="card__title">Global Feature Importance</div>
+          <div class="card__subtitle">Mean |SHAP| value averaged across all predictions — higher = more influential</div>
+        </div>
+        <span class="tag">Top 20 Features</span>
+      </div>
+      <div id="importance-chart" style="margin-top:var(--s4)">
+        <div class="skeleton" style="height:320px;border-radius:var(--r-lg)"></div>
+      </div>
+    </div>
+
+    <!-- Feature Importance Bar List -->
+    <div class="card mb-4" data-reveal>
+      <div class="card__header">
+        <div class="card__title">Feature Importance Ranking</div>
+        <div class="card__subtitle">SNP markers ordered by mean absolute SHAP contribution</div>
+      </div>
+      <div id="importance-list" style="margin-top:var(--s4)">
+        <div class="skeleton" style="height:200px;border-radius:var(--r-lg)"></div>
+      </div>
+    </div>
+
+    <!-- SHAP Beeswarm Summary Plot -->
+    <div class="card mb-4" data-reveal>
+      <div class="card__header">
+        <div>
+          <div class="card__title">SHAP Summary Plot</div>
+          <div class="card__subtitle">Beeswarm: each dot = one sample. Red = high feature value, blue = low. X-axis = SHAP impact on yield prediction.</div>
+        </div>
+      </div>
+      <div id="summary-plot" style="margin-top:var(--s4)">
+        <div class="skeleton" style="height:380px;border-radius:var(--r-lg)"></div>
+      </div>
+    </div>
+
+    <!-- SHAP methodology -->
+    <div class="card mb-4" data-reveal>
+      <div class="card__header">
+        <div class="card__title">SHAP Methodology</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--s5);margin-top:var(--s2)">
+        <div>
+          <div style="font-size:var(--t-xs);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:var(--s2)">Method</div>
+          <div style="font-family:var(--font-mono);color:var(--brand)">TreeExplainer</div>
+          <div style="font-size:var(--t-xs);color:var(--text-muted);margin-top:var(--s1)">Exact SHAP for tree ensembles</div>
+        </div>
+        <div>
+          <div style="font-size:var(--t-xs);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:var(--s2)">Explained Model</div>
+          <div style="font-family:var(--font-mono);color:var(--brand)">Random Forest (Yield)</div>
+          <div style="font-size:var(--t-xs);color:var(--text-muted);margin-top:var(--s1)">200-estimator regressor</div>
+        </div>
+        <div>
+          <div style="font-size:var(--t-xs);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:var(--s2)">Sample Size</div>
+          <div style="font-family:var(--font-mono);color:var(--brand)">200 test samples</div>
+          <div style="font-size:var(--t-xs);color:var(--text-muted);margin-top:var(--s1)">Background: 100 samples</div>
+        </div>
+        <div>
+          <div style="font-size:var(--t-xs);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:var(--s2)">Features Shown</div>
+          <div style="font-family:var(--font-mono);color:var(--brand)">Top 20</div>
+          <div style="font-size:var(--t-xs);color:var(--text-muted);margin-top:var(--s1)">By mean |SHAP|</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Local Explanations -->
+    <div data-reveal>
+      <div style="margin-bottom:var(--s4)">
+        <h2 style="font-size:var(--t-xl);font-weight:700">Local Explanations — Top-5 Hybrids</h2>
+        <p style="color:var(--text-muted);font-size:var(--t-sm);margin-top:var(--s1)">
+          Per-pair SHAP waterfall charts. Orange bars = positive impact on yield; blue = negative impact.
+        </p>
+      </div>
+      <div id="local-explanations">
+        <div class="alert alert--info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Local explanations appear here after running <a href="recommend.html">Recommendations</a>.
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/auth.js?v=2"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/api.js?v=2"></script>
+  <script src="js/explainability.js?v=5"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      requireAuth('login.html');
+    });
+  </script>
+</body>
+</html>

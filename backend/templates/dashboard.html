@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — BreedAI Virtual Breeding Framework{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:1280px;margin:var(--s6) auto">
+
+  <div class="page-header" data-reveal>
+    <div class="page-header__eyebrow"><span class="tag">Research Dashboard</span></div>
+    <h1 class="page-header__title">Breeding Intelligence Center</h1>
+    <p class="page-header__sub">AI-powered parent selection · SNP genomic data · South-India Maize · IEEE Framework</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:var(--s4);margin-bottom:var(--s4)" data-reveal data-reveal-delay="1">
+    <div id="top-rec-container">
+      <div class="card" style="height:200px">
+        <div class="skeleton" style="height:20px;width:200px;border-radius:6px;margin-bottom:12px"></div>
+        <div class="skeleton" style="height:40px;width:60%;border-radius:6px;margin-bottom:12px"></div>
+        <div class="skeleton" style="height:20px;width:80%;border-radius:6px"></div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:var(--s3)">
+      <div class="metric-card metric-card--yield">
+        <div class="metric-card__label">Best Yield</div>
+        <div class="metric-card__value" id="metric-yield">—</div>
+        <div class="metric-card__sub">t/ha predicted</div>
+      </div>
+      <div class="metric-card metric-card--confidence">
+        <div class="metric-card__label">Top Score</div>
+        <div class="metric-card__value" id="metric-score">—</div>
+        <div class="metric-card__sub">Composite recommendation</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="metric-cards mb-4" data-reveal data-reveal-delay="2">
+    <div class="metric-card metric-card--yield">
+      <div class="metric-card__label">Yield (Best Hybrid)</div>
+      <div class="metric-card__value" id="dc-yield">—</div>
+      <div class="metric-card__sub">Dataset mean: <span id="yield-mean">—</span></div>
+    </div>
+    <div class="metric-card metric-card--drought">
+      <div class="metric-card__label">Drought Tolerance</div>
+      <div class="metric-card__value" id="dc-drought" style="font-size:var(--t-2xl)">—</div>
+      <div class="metric-card__sub">Top-1 recommendation</div>
+    </div>
+    <div class="metric-card metric-card--disease">
+      <div class="metric-card__label">Disease Resistance</div>
+      <div class="metric-card__value" id="dc-disease" style="font-size:var(--t-2xl)">—</div>
+      <div class="metric-card__sub">Top-1 recommendation</div>
+    </div>
+    <div class="metric-card metric-card--quality">
+      <div class="metric-card__label">Grain Quality</div>
+      <div class="metric-card__value" id="dc-quality" style="font-size:var(--t-2xl)">—</div>
+      <div class="metric-card__sub">Top-1 recommendation</div>
+    </div>
+    <div class="metric-card metric-card--maturity">
+      <div class="metric-card__label">Maturity Period</div>
+      <div class="metric-card__value" id="dc-maturity" style="font-size:var(--t-2xl)">—</div>
+      <div class="metric-card__sub">Top-1 recommendation</div>
+    </div>
+    <div class="metric-card metric-card--confidence">
+      <div class="metric-card__label">Confidence</div>
+      <div class="metric-card__value" id="dc-confidence">—</div>
+      <div class="metric-card__sub">Classifier probability</div>
+    </div>
+  </div>
+
+  <div class="card mb-4" data-reveal data-reveal-delay="3">
+    <div class="card__header">
+      <div>
+        <div class="card__title">Top-5 Parent Combination Recommendations</div>
+        <div class="card__subtitle">Ranked by composite score: Yield (35%) · Drought (20%) · Disease (15%) · Quality (15%) · Maturity (5%) · Compat (10%)</div>
+      </div>
+      <a href="{{ url_for('views.recommend') }}" class="btn btn--primary btn--sm">Run New</a>
+    </div>
+    <div class="rec-table-wrapper">
+      <table class="rec-table" id="rec-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Hybrid Combination</th>
+            <th>Yield (t/ha)</th>
+            <th>Drought</th>
+            <th>Disease</th>
+            <th>Quality</th>
+            <th>Maturity</th>
+            <th>Score</th>
+            <th>Confidence</th>
+          </tr>
+        </thead>
+        <tbody id="rec-table-body">
+          <tr>
+            <td colspan="9" style="text-align:center;color:var(--muted);padding:var(--s8)">
+              Loading recommendations…
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);margin-bottom:var(--s4)" data-reveal data-reveal-delay="4">
+    <div class="card">
+      <div class="card__header">
+        <div class="card__title">Model Performance</div>
+        <span class="tag" id="model-status">Active</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s2)">
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted);font-size:var(--t-sm)">Model</span><span id="model-name" style="font-weight:600;font-size:var(--t-sm)">—</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted);font-size:var(--t-sm)">Yield R²</span><span id="model-yield-r2" style="font-weight:700;color:var(--sage-700)">—</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted);font-size:var(--t-sm)">Drought Accuracy</span><span id="model-drought" style="font-weight:700;color:var(--earth-600)">—</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted);font-size:var(--t-sm)">Disease Accuracy</span><span id="model-disease" style="font-weight:700;color:var(--coral)">—</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted);font-size:var(--t-sm)">Quality Accuracy</span><span id="model-quality" style="font-weight:700;color:var(--azure)">—</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted);font-size:var(--t-sm)">Maturity Accuracy</span><span id="model-maturity" style="font-weight:700;color:var(--gold)">—</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted);font-size:var(--t-sm)">Yield OOB Score</span><span id="model-oob" style="font-weight:700;color:var(--sage-500)">—</span></div>
+      </div>
+      <div style="margin-top:var(--s5)">
+        <a href="{{ url_for('views.analytics') }}" class="btn btn--ghost btn--sm">Full Analytics →</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__header">
+        <div class="card__title">Dataset Summary</div>
+        <a href="{{ url_for('views.upload') }}" class="btn btn--secondary btn--sm">Upload</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s2)">
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted);font-size:var(--t-sm)">Total Rows</span><span id="ds-rows" style="font-weight:600">—</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted);font-size:var(--t-sm)">Unique Lines</span><span id="ds-lines" style="font-weight:600">—</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted);font-size:var(--t-sm)">SNP Markers</span><span id="ds-snps" style="font-weight:700;color:var(--sage-600)">—</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted);font-size:var(--t-sm)">Environments</span><span id="ds-envs" style="font-weight:600">—</span></div>
+      </div>
+      <div style="margin-top:var(--s5);display:flex;gap:var(--s2)">
+        <a href="{{ url_for('views.analytics') }}" class="btn btn--ghost btn--sm">Analytics →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

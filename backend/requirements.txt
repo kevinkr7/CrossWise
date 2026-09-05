@@ -14,7 +14,14 @@ python-dateutil==2.9.0.post0
 pytz==2025.2
 scikit-learn==1.8.0
 scipy==1.16.3
+shap
 six==1.17.0
 threadpoolctl==3.6.0
 tzdata==2025.3
 Werkzeug==3.1.4
+xgboost
+lightgbm
+pymongo
+dnspython
+Flask-JWT-Extended
+python-dotenv

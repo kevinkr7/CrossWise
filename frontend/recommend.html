@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recommendations — CrossWise Virtual Breeding</title>
+  <meta name="description" content="View the best virtual breeding recommendations and trait predictions.">
+  <link rel="icon" type="image/png" href="assets/icons/leaf.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="nav-spacer"></div>
+
+  <!-- Main Content -->
+  <main class="main-content" style="max-width:1120px;margin:0 auto">
+    <!-- Page Header -->
+    <div class="page-header" data-reveal style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:var(--s4);margin-bottom:var(--s6)">
+      <div>
+        <div class="page-header__eyebrow"><span class="tag">Step 2 of 3</span></div>
+        <h1 class="page-header__title">Best Recommended Combinations</h1>
+        <p class="page-header__sub">Optimal virtual parent pairings sorted by composite multi-trait prediction scores.</p>
+      </div>
+      <div style="display:flex;gap:var(--s2);align-items:center;flex-wrap:wrap">
+        <button class="btn btn--outline" id="export-rec-btn" style="display:inline-flex;align-items:center;gap:var(--s2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+        <a href="upload.html" class="btn btn--secondary" style="display:inline-flex;align-items:center;gap:var(--s2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Simulation
+        </a>
+      </div>
+    </div>
+
+    <div id="rec-error" class="hidden mb-4"></div>
+
+    <!-- Summary Banner injected here -->
+    <div id="rec-summary-banner" class="mb-4"></div>
+
+    <!-- Top pair highlight injected here -->
+    <div id="top-pair-highlight" class="mb-4" data-reveal data-reveal-delay="1"></div>
+
+    <!-- Recommendations Table -->
+    <div class="card mb-4" data-reveal data-reveal-delay="2" id="rec-results">
+      <div class="card__header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--s3)">
+        <div>
+          <div class="card__title">Evaluation Results</div>
+          <div class="card__subtitle">Ranked by Yield (40%) · Drought (30%) · Disease (20%) · Compatibility (10%)</div>
+        </div>
+        <span class="tag tag--success">All Valid Combinations</span>
+      </div>
+      
+      <div class="rec-table-wrapper">
+        <table class="rec-table data-table" id="rec-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Hybrid Combination</th>
+              <th>Yield <span style="font-weight:400;color:var(--text-muted)">(t/ha)</span></th>
+              <th>Drought</th>
+              <th>Disease</th>
+              <th>Quality</th>
+              <th>Maturity</th>
+              <th>Genomic Compat.</th>
+              <th>Score</th>
+              <th>Conf.</th>
+              <th>Explain</th>
+            </tr>
+          </thead>
+          <tbody id="rec-table-body">
+            <!-- Dynamically populated rows -->
+          </tbody>
+        </table>
+      </div>
+      
+      <div style="padding:var(--s5);text-align:center;border-top:1px solid var(--border);display:flex;justify-content:center;gap:var(--s3);flex-wrap:wrap">
+        <a href="explainability.html" class="btn btn--secondary btn--lg" style="display:inline-flex;align-items:center;gap:var(--s2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          View AI Explanations (SHAP)
+        </a>
+        <a href="dashboard.html" class="btn btn--outline btn--lg" style="display:inline-flex;align-items:center;gap:var(--s2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          View in Dashboard
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/auth.js?v=3"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/recommend.js?v=3"></script>
+  <script>
+    requireAuth();
+  </script>
+</body>
+</html>
