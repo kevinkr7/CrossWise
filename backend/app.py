@@ -10,7 +10,7 @@ On startup:
 import logging
 import os
 
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request, make_response
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 import config
@@ -32,7 +32,31 @@ app = Flask(
     static_url_path="/static",
 )
 
-CORS(app)
+CORS(
+    app,
+    resources={r"/*": {"origins": "*"}},
+    supports_credentials=True,
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
+)
+
+@app.before_request
+def handle_options_preflight():
+    """Immediately resolve CORS preflight OPTIONS requests."""
+    if request.method == "OPTIONS":
+        res = make_response()
+        res.headers["Access-Control-Allow-Origin"] = "*"
+        res.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+        res.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept"
+        return res, 200
+
+@app.after_request
+def add_cors_headers(response):
+    """Ensure CORS headers are present on all responses, including errors."""
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept"
+    return response
 
 # ── JWT Auth ──────────────────────────────────────────────────────────────────
 app.config["JWT_SECRET_KEY"] = config.JWT_SECRET_KEY
