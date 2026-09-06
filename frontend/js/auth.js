@@ -8,7 +8,7 @@ const TOKEN_KEY = 'hcp_token';
 const API_BASE_AUTH = window.API_BASE || window.CROSSWISE_API_URL || localStorage.getItem('crosswise_api_url') || (
   ['localhost', '127.0.0.1', '0.0.0.0', ''].includes(window.location.hostname)
     ? `${window.location.protocol}//${window.location.hostname || '127.0.0.1'}:5000`
-    : 'https://api.yourdomain.com'
+    : 'https://api.kevinography.in'
 );
 
 function getCurrentUser() {
@@ -85,7 +85,7 @@ async function loginUser(email, password) {
 
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(data.user));
     sessionStorage.setItem(TOKEN_KEY, data.access_token);
-    
+
     return { ok: true, user: data.user };
   } catch (error) {
     console.error('Login error:', error);
@@ -132,28 +132,28 @@ function requireAdmin(redirectTo = 'index.html') {
 async function apiFetch(url, options = {}) {
   const token = getAuthToken();
   const headers = { ...options.headers };
-  
+
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
-  
+
   // Only set application/json if body is string and content-type isn't explicitly disabled/set
   if (options.body && typeof options.body === 'string' && !headers['Content-Type']) {
     headers['Content-Type'] = 'application/json';
   }
 
   const response = await fetch(url, { ...options, headers });
-  
+
   if (response.status === 401) {
     // Token expired or invalid
     logoutUser();
     throw new Error("Session expired. Please log in again.");
   }
-  
+
   // If response has no content (like 204), return empty object
   const text = await response.text();
   if (!text) return {};
-  
+
   try {
     const data = JSON.parse(text);
     if (!response.ok) throw new Error(data.error || `HTTP error ${response.status}`);
