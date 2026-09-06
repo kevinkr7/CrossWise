@@ -106,16 +106,16 @@ def train_model(
         preprocessor.top_feature_indices = None
 
     # ── 5. Train & K-Fold Cross Validation ──────────────────────────────────
-    # We apply K-Fold on the training data to get robust metrics
-    kf = KFold(n_splits=5, shuffle=True, random_state=42)
+    # Fast 3-fold cross validation for yield tracking
+    kf = KFold(n_splits=3, shuffle=True, random_state=42)
     cv_scores = []
     if "yield" in y_train:
         for tr_idx, val_idx in kf.split(X_train):
-            cv_rf = RandomForestRegressor(n_estimators=100, max_depth=None, random_state=42)
+            cv_rf = RandomForestRegressor(n_estimators=30, max_depth=10, random_state=42, n_jobs=2)
             cv_rf.fit(X_train[tr_idx], y_train["yield"][tr_idx])
             preds = cv_rf.predict(X_train[val_idx])
             cv_scores.append(r2_score(y_train["yield"][val_idx], preds))
-        logger.info("5-Fold CV R2 for Yield: %s (mean: %.4f)", cv_scores, np.mean(cv_scores))
+        logger.info("3-Fold CV R2 for Yield: %s (mean: %.4f)", cv_scores, np.mean(cv_scores))
 
     model = get_model(model_name)
     model.fit(X_train, y_train, X_val, y_val)
@@ -128,10 +128,9 @@ def train_model(
         train_r2 = r2_score(y_train["yield"], model.regressor.predict(X_train))
         test_r2 = metrics.get("yield_r2", 0)
         logger.info("Overfitting Check - Train R2: %.4f, Test R2: %.4f", train_r2, test_r2)
-        if train_r2 - test_r2 > 0.15:
-            logger.warning("Overfitting detected! Consider reducing max_depth or increasing min_samples_leaf.")
-            # Auto-correct by retraining with stronger regularization
-            model = get_model(model_name, max_depth=15, min_samples_leaf=2)
+        if train_r2 - test_r2 > 0.25:
+            logger.warning("Significant overfitting detected! Adjusting regularization.")
+            model = get_model(model_name, max_depth=10, min_samples_leaf=2)
             model.fit(X_train, y_train, X_val, y_val)
             metrics = model.get_evaluation_metrics(X_test, y_test)
             logger.info("Retrained model metrics after regularization: %s", metrics)

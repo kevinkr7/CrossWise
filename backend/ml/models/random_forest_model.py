@@ -82,16 +82,15 @@ class RandomForestBreedingModel(BaseBreedingModel):
             random_state = self.random_state,
         )
 
-    def _make_classifier(self) -> CalibratedClassifierCV:
-        rf = RandomForestClassifier(
+    def _make_classifier(self) -> RandomForestClassifier:
+        return RandomForestClassifier(
             n_estimators = self.n_estimators,
             max_depth    = self.max_depth,
             min_samples_leaf = self.min_samples_leaf,
+            oob_score    = True,
             n_jobs       = self.n_jobs,
             random_state = self.random_state,
         )
-        # Using sigmoid calibration to get better probabilities
-        return CalibratedClassifierCV(rf, method='sigmoid', cv=3)
 
     # ── Lifecycle ─────────────────────────────────────────────────────────────
 
@@ -121,11 +120,11 @@ class RandomForestBreedingModel(BaseBreedingModel):
                 clf = self._make_classifier()
                 clf.fit(X_train, y_train[target])
                 self.classifiers[target] = clf
-                # CalibratedClassifierCV doesn't have oob_score_
                 oob_key = f"{target.lower()}_oob"
-                self._oob_scores[oob_key] = 0.0
+                self._oob_scores[oob_key] = float(clf.oob_score_) if hasattr(clf, "oob_score_") else 0.0
                 val_acc = float(accuracy_score(y_val[target], clf.predict(X_val)))
-                logger.info(f"{target} accuracy (val) = %.4f", val_acc)
+                logger.info(f"{target} accuracy (val) = %.4f | OOB = %.4f", val_acc, self._oob_scores[oob_key])
+
 
     def predict(self, X: np.ndarray) -> dict[str, np.ndarray]:
         """Run inference and return raw prediction arrays (not decoded yet)."""

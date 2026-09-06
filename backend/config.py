@@ -79,10 +79,11 @@ PHENO_CSV_ALIASES = {
 }
 
 # ── Model Hyperparameters ─────────────────────────────────────────────────────
-RF_N_ESTIMATORS  = 200
-RF_MAX_DEPTH     = None
+RF_N_ESTIMATORS  = 60
+RF_MAX_DEPTH     = 12
 RF_RANDOM_STATE  = 42
-RF_N_JOBS        = -1       # Use all CPU cores
+RF_N_JOBS        = 2        # Bounded parallel workers to fit comfortably within 512MB RAM
+
 
 TRAIN_RATIO = 0.70
 VAL_RATIO   = 0.15
