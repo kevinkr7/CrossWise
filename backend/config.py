@@ -26,6 +26,12 @@ MODELS_DIR = os.path.join(BASE_DIR, "models")
 MAIZE_DATASET_PATH = os.path.join(
     PROJECT_ROOT, "Maize_datasets", "synthetic_maize_dataset.csv"
 )
+if not os.path.exists(MAIZE_DATASET_PATH):
+    # Fallback if working directory is backend/ or root
+    alt_path = os.path.join(BASE_DIR, "Maize_datasets", "synthetic_maize_dataset.csv")
+    if os.path.exists(alt_path):
+        MAIZE_DATASET_PATH = alt_path
+
 
 # ── Model Artefact Paths ──────────────────────────────────────────────────────
 RF_MODEL_PATH      = os.path.join(MODELS_DIR, "hybrid_rf_model.pkl")
