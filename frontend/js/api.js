@@ -11,7 +11,7 @@
 
 // Replace this with your production backend domain / Oracle VM public domain
 // e.g., 'https://api.yourdomain.com' or 'http://YOUR_ORACLE_IP:5000'
-const PROD_BACKEND_URL = 'https://api.kevinography.in';
+const PROD_BACKEND_URL = 'https://crosswise.onrender.com';
 
 const IS_LOCAL = [
   'localhost',

@@ -8,7 +8,7 @@ const TOKEN_KEY = 'hcp_token';
 const API_BASE_AUTH = window.API_BASE || window.CROSSWISE_API_URL || localStorage.getItem('crosswise_api_url') || (
   ['localhost', '127.0.0.1', '0.0.0.0', ''].includes(window.location.hostname)
     ? `${window.location.protocol}//${window.location.hostname || '127.0.0.1'}:5000`
-    : 'https://api.kevinography.in'
+    : 'https://crosswise.onrender.com'
 );
 
 function getCurrentUser() {
